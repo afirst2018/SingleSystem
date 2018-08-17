@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.role.managerdao.RolePrivilegeRelaDAO">
+	<select id="getRoleAuth" parameterType="long" resultType="com.chujiu.dto.RolePrivilegeDto">
+		SELECT role_id as roleId,privilege_id  as privilegeId FROM role_privilege_rela WHERE role_id = #{id}
+	</select>
+	<delete id="deleteRoleAuth" parameterType="long">
+		delete from role_privilege_rela where role_id = #{id}
+	</delete>
+	<delete id="deleteRoleAuthByAuthId" parameterType="long">
+		delete from role_privilege_rela where privilege_id = #{id}
+	</delete>
+	<insert id="saveRoleAuth" parameterType="java.util.List">
+		INSERT INTO role_privilege_rela(ROLE_ID,PRIVILEGE_ID) VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+			(#{item.roleId},#{item.privilegeId})  
+		</foreach>  
+	</insert>
+</mapper>

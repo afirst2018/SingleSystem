@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.notice.managerdao.NoticeManageDAO">
+	<resultMap type="com.chujiu.dto.NoticeDto" id="noticeEntity">
+		<id column="ID" property="id" />
+		<result column="NOTICE_TEXT" property="noticeText" />
+		<result column="ORDER_NUM" property="orderNum" />
+		<result column="NEED_SHOW" property="needShow" />
+		<result column="BUILD_DATE" property="buildDate" />
+		<result column="MODIFY_DATE" property="modifyDate" />
+		<result column="BUILDER" property="builder" />
+		<result column="MODIFIER" property="modifier" />
+	</resultMap> 
+	<!-- 查询全部公告信息 -->
+	<select id="selectNoticePage" resultMap="noticeEntity">
+		SELECT ID,NOTICE_TEXT,ORDER_NUM,NEED_SHOW,BUILD_DATE,MODIFY_DATE,BUILDER,MODIFIER FROM SYS_NOTICE WHERE 1=1 
+		<if test="modifyDateStart != null and modifyDateStart != ''">
+            and date(MODIFY_DATE) &gt;=#{modifyDateStart}
+        </if>
+        <if test="modifyDateEnd != null and modifyDateEnd != ''"> 
+            and date(MODIFY_DATE) &lt;=#{modifyDateEnd}
+        </if>
+        <if test="noticeText != null and noticeText != ''"> 
+            AND NOTICE_TEXT LIKE CONCAT('%',#{noticeText},'%')
+        </if>
+		ORDER BY ORDER_NUM, BUILD_DATE DESC
+	</select>
+	
+	<!-- 新增公告信息 -->
+	<insert id="addNotice" parameterType="com.chujiu.dto.NoticeDto">
+		 insert into SYS_NOTICE (NOTICE_TEXT,ORDER_NUM,NEED_SHOW,BUILDER,MODIFIER,BUILD_DATE,MODIFY_DATE) values (#{noticeText},#{orderNum,jdbcType=SMALLINT},#{needShow,jdbcType=CHAR},#{builder,jdbcType=VARCHAR},#{modifier,jdbcType=VARCHAR},now(),now())
+	</insert>
+	<!-- 修改公告信息 -->
+	<update id="updateNotice" parameterType="com.chujiu.dto.NoticeDto">
+		update SYS_NOTICE set NOTICE_TEXT=#{noticeText},ORDER_NUM=#{orderNum,jdbcType=SMALLINT},
+						NEED_SHOW=#{needShow,jdbcType=CHAR},MODIFIER=#{modifier,jdbcType=VARCHAR},MODIFY_DATE = now()
+		where id=#{id,jdbcType=BIGINT}
+	</update>
+	
+	<!-- 删除公告信息 -->
+	<delete id="deleteNotice" parameterType="long">
+		delete from SYS_NOTICE where ID=#{id}
+	</delete>
+	
+	<!-- 根据id查询公告信息 -->
+	<select id="selectNoticeById" resultMap="noticeEntity">
+		SELECT ID,NOTICE_TEXT,ORDER_NUM,NEED_SHOW FROM SYS_NOTICE WHERE ID=#{id}
+	</select>
+</mapper>

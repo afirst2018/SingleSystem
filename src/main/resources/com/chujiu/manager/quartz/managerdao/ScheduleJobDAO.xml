@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.quartz.managerdao.ScheduleJobDAO">
+	<resultMap id="BaseResultMap" type="com.chujiu.dto.ScheduleJobDto" >
+		<id column="ID" property="id" jdbcType="BIGINT" />
+		<result column="ORDER_NO" property="orderNo" jdbcType="BIGINT" />
+		<result column="IS_ORDER_BY" property="isOrderBy" jdbcType="CHAR" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="DATE" />
+		<result column="UPDATE_TIME" property="updateTime" jdbcType="DATE" />
+		<result column="LAST_PROCESS_TIME" property="lastProcessTime" jdbcType="DATE" />
+		<result column="NEXT_PROCESS_TIME" property="nextProcessTime" jdbcType="DATE" />
+		<result column="JOB_NAME" property="jobName" jdbcType="VARCHAR" />
+		<result column="JOB_GROUP" property="jobGroup" jdbcType="VARCHAR" />
+		<result column="JOB_STATUS" property="jobStatus" jdbcType="CHAR" />
+		<result column="CRON_EXPRESSION" property="cronExpression" jdbcType="VARCHAR" />
+		<result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="BEAN_CLASS" property="beanClass" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+		ID, ORDER_NO, IS_ORDER_BY, CREATE_TIME, UPDATE_TIME, LAST_PROCESS_TIME, NEXT_PROCESS_TIME, JOB_NAME, JOB_GROUP,
+		JOB_STATUS, CRON_EXPRESSION, DESCRIPTION, BEAN_CLASS
+	</sql>
+	<!--分页查询定时任务列表-->
+	<select id="getScheduleJobByPage" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM qrtz_task
+		where 1=1
+		<if test="entity.jobName !=null and entity.jobName!=''">
+			AND JOB_NAME LIKE concat("%",#{entity.jobName},"%")
+		</if>
+		<if test="entity.jobGroup !=null and entity.jobGroup!=''">
+			AND JOB_GROUP LIKE concat("%",#{entity.jobGroup},"%")
+		</if>
+		ORDER BY IS_ORDER_BY desc ,JOB_GROUP, order_no
+	</select>
+
+	<!--查询所有启用的定时任务列表-->
+	<select id="getScheduleJobAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM qrtz_task
+		WHERE JOB_STATUS = '1'
+		ORDER BY IS_ORDER_BY desc ,JOB_GROUP, order_no
+	</select>
+
+	<update id="updateScheduleJob">
+		UPDATE qrtz_task
+		<set>
+			<if test="entity.orderNo!=null and entity.orderNo!=''">
+				ORDER_NO = #{entity.orderNo},
+			</if>
+			IS_ORDER_BY = #{entity.isOrderBy},
+			UPDATE_TIME = now(),
+			JOB_NAME = #{entity.jobName},
+			JOB_GROUP = #{entity.jobGroup},
+			JOB_STATUS = #{entity.jobStatus},
+			CRON_EXPRESSION = #{entity.cronExpression},
+			DESCRIPTION = #{entity.description}
+		</set>
+		WHERE id = #{entity.id}
+	</update>
+
+	<select id="getJobById" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM qrtz_task
+		WHERE id = #{id}
+	</select>
+</mapper>

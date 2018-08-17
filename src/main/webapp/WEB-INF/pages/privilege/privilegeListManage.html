@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<title>权限管理</title>
+		<link rel="stylesheet" href="${basePath}/resource/css/zTreeStyle.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="${basePath}/resource/css/plugins/iCheck/custom.css" >
+		<script type="text/javascript" src="${basePath}/resource/js/plugins/iCheck/icheck.min.js"></script>
+		<script type="text/javascript" src="${basePath}/resource/js/jquery.ztree.all-3.5.min.js"></script>
+		<script type="text/javascript" src="${basePath}/resource/js/privilege/privilegeListManage.js"></script>
+	</head>
+	<body>
+		<headline>权限设定</headline>
+		<subheadline>
+			<ol class="breadcrumb">  
+				<li><a>系统管理</a></li>
+				<li class="active">权限设定</li>
+			</ol>
+		</subheadline>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>权限信息列表</h5>
+					</div>
+					<div class="ibox-content">
+						<div class="search-well">
+							<form class="form-inline" style="margin-top: 0px; margin-right: 0px;margin-bottom:20px;">
+								<input class="input-xlarge form-control" placeholder="权限名称" id="priNameConditionTxt" type="text">
+								<input class="input-xlarge form-control" placeholder="描述信息" id="priDescConditionTxt" type="text">
+								<button id="searchBtn" type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick='queryPrivilegeList();'><i class="fa fa-search"></i> 查询</button>
+								<button type="button" class="btn btn-white" style="margin-bottom:0px;" onclick='clearConditionInput();'><i class="fa fa-eraser"></i> 清空</button>
+								<button type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick="showAddPrivilegeListDiv();"> <i class="fa fa-plus"></i> 新增 </button>
+							</form>
+						</div>
+						<div class="row">
+							<div class="col-lg-9">
+								<div class="table-responsive">
+									<table id="priviListTable" class="table table-striped responsive-utilities jambo_table"></table>
+									<div id="pageDiv"></div>
+								</div>
+							</div>
+							<div class="col-lg-3" style="min-width:400px;">
+								<button type="button" class="btn btn-primary" onclick='savePrivilegeMenuRela();' style="margin-left: 30px;"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</button>
+								<button type="button" class="btn btn-primary" onclick='nodeExpendHandler();' style="margin-left: 5px;"><i class="fa fa-chevron-down"></i>&nbsp;&nbsp;展开</button>
+								<button type="button" class="btn btn-primary" onclick='nodeCollapseHandler();' style="margin-left: 5px;"><i class="fa fa-chevron-up"></i>&nbsp;&nbsp;折叠</button>
+								<div style="margin-left: 30px;">
+									<span style="color:#f8ac59;font-weight:bold">当前选中的权限名称：</span><span id="selectedPriName"></span>
+								</div>
+								<ul id="tree" class="ztree" style="width: 260px; overflow: auto; margin-left: 30px;"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 新增/修改 权限 start -->
+		<div class="modal fade" id="addPrivilegeListDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel"></h4>
+					</div>
+					<div class="modal-body">
+						<form id="addForm">
+							<input type="hidden" name="id" id="idTxt" />
+							<div class="form-group">
+								<label for="priNameTxt">权限名称<font style="color:#a94442;">*</font></label>
+								<input type="text" class="form-control" name="priName" id="priNameTxt" required maxLength="20" />
+							</div>
+							<div class="form-group">
+								<label for="priDescTxt">描述信息</label> <input type="text" class="form-control" name="priDesc" id="priDescTxt" maxLength="255" />
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick="doValidate();"><i class="fa fa-save"></i> 保存</button>
+						<button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 新增/修改 权限 end-->
+		<input type="hidden" id="priNameTxtHdn" />
+		<input type="hidden" id="priDescTxtHdn" />
+	</body>
+</html>

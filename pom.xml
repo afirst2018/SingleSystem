@@ -1,0 +1,631 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.chujiu</groupId>
+	<artifactId>SingleSystem</artifactId>
+	<packaging>war</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>SingleSystem Webapp</name>
+	<url>http://maven.apache.org</url>
+	
+	<organization>
+		<name>初九数据科技（上海）有限公司</name>
+	</organization>
+	<inceptionYear>2016</inceptionYear>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype</id>
+			<url>https://oss.sonatype.org/content/repositories/sourceforge-releases/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>mvnrepository</id>
+			<url>http://central.maven.org/maven2/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Spring framework version -->
+		<springframework.version>4.1.2.RELEASE</springframework.version>
+		<springframework.security.version>3.2.3.RELEASE</springframework.security.version>
+		<org.aspectj.aspectjweaver.version>1.7.1</org.aspectj.aspectjweaver.version>
+		<aopalliance.version>1.0</aopalliance.version>
+		<junit.version>4.12</junit.version>
+		<!-- mybatis version -->
+		<mybatis.version>3.2.7</mybatis.version>
+		<mybatis-spring.version>1.2.2</mybatis-spring.version>
+		<mybatis-ehcache.version>1.0.0</mybatis-ehcache.version>
+		<!-- java web api version -->
+		<servlet.version>3.1.0</servlet.version>
+		<jstl.version>1.2</jstl.version>
+		<taglibs.version>1.1.2</taglibs.version>
+		<jsp-api.version>2.2.1-b03</jsp-api.version>
+		<!-- database driver version -->
+		<mysql.version>5.1.31</mysql.version>
+		<!-- logger api version -->
+		<commons-logging.version>1.1.3</commons-logging.version>
+		<log4j.version>1.2.14</log4j.version>
+		<slf4j-api.version>1.7.6</slf4j-api.version>
+		<slf4j-log4j12.version>1.7.6</slf4j-log4j12.version>
+		<!-- apache common library version -->
+		<commons-collections.version>3.1</commons-collections.version>
+		<commons-fileupload.version>1.3.1</commons-fileupload.version>
+		<commons-io.version>2.0.1</commons-io.version>
+		<httpclient.version>4.5</httpclient.version>
+		<commons-lang.version>2.6</commons-lang.version>
+		<commons-beanutils.version>1.9.2</commons-beanutils.version>
+		<!-- database connection pool version -->
+		<druid.version>1.0.24</druid.version>
+		<!-- json version -->
+		<jackson.version>1.9.13</jackson.version>
+		<com.fasterxml.jackson.core.version>2.6.7</com.fasterxml.jackson.core.version>
+		<!-- freemarker version -->
+		<freemarker.version>2.3.20</freemarker.version>
+		<commons-codec.version>1.10</commons-codec.version>
+		<!-- jdk builder version -->
+		<buildNumber>1.8</buildNumber>
+		<!-- sitemesh version -->
+		<sitemesh.version>3.0.0</sitemesh.version>
+		<!-- ftp version -->
+		<commons-net.version>3.3</commons-net.version>
+		<!-- json version -->
+		<fastjson.version>1.2.4</fastjson.version>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<!-- 配置连接池信息 -->
+				<druid.driverClass>com.mysql.jdbc.Driver</druid.driverClass>
+				<druid.jdbcUrl>jdbc:mysql://localhost:3306/sso_demo?allowMultiQueries=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8</druid.jdbcUrl>
+				<druid.username>root</druid.username>
+				<druid.password>root</druid.password>
+				<druid.initialSize>1</druid.initialSize>
+				<druid.minIdle>1</druid.minIdle>
+				<druid.maxActive>20</druid.maxActive>
+				<druid.maxWait>60000</druid.maxWait>
+				<druid.timeBetweenEvictionRunsMillis>60000</druid.timeBetweenEvictionRunsMillis>
+				<druid.minEvictableIdleTimeMillis>300000</druid.minEvictableIdleTimeMillis>
+				<druid.validationQuery>SELECT 'x'</druid.validationQuery>
+				<druid.testWhileIdle>true</druid.testWhileIdle>
+				<druid.testOnBorrow>false</druid.testOnBorrow>
+				<druid.testOnReturn>false</druid.testOnReturn>
+				<druid.poolPreparedStatements>false</druid.poolPreparedStatements>
+				<druid.maxPoolPreparedStatementPerConnectionSize>20</druid.maxPoolPreparedStatementPerConnectionSize>
+				<druid.filters>stat</druid.filters>
+				<!-- 日志输出级别 -->
+				<logLevel>debug</logLevel>
+				<!-- 配置静态资源路径 (若静态资源分离到单独的资源服务器上，则配置此参数，并在页面中使用${staticPath}引用静态资源) -->
+				<static.resource.url>http://localhost:8080/${project.artifactId}/resource/</static.resource.url>
+				<system.err.log.file>c:/log/${project.artifactId}/sys-error.log</system.err.log.file>
+				<!-- 当前系统id -->
+				<subId>currentSubId</subId>
+				<!-- 应用系统连接地址 -->
+				<application.url1>https://www.hao123.com</application.url1>
+				<application.name1>好123</application.name1>
+				<application.url2>https://www.baidu.com</application.url2>
+				<application.name2>百度</application.name2>
+				<application.url3>http://www.163.com/</application.url3>
+				<application.name3>网易</application.name3>
+				<!-- 定时任务开启/关闭-->
+				<!--<quartz.start>on</quartz.start>-->
+				<quartz.start>off</quartz.start>
+				<!-- 定时任务邮件发送配置 -->
+				<mail.host>smtp.exmail.qq.com</mail.host>
+				<mail.from>wan***@chujiu-data.com</mail.from>
+				<mail.to>49352****@qq.com,26066****@qq.com</mail.to>
+				<mail.user>wan***@chujiu-data.com</mail.user>
+				<mail.pwd>***</mail.pwd>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<!-- 配置连接池信息 -->
+				<druid.driverClass>com.mysql.jdbc.Driver</druid.driverClass>
+				<druid.jdbcUrl>jdbc:mysql://localhost:3306/sso_demo?allowMultiQueries=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8</druid.jdbcUrl>
+				<druid.username>root</druid.username>
+				<druid.password>redhat</druid.password>
+				<druid.initialSize>1</druid.initialSize>
+				<druid.minIdle>1</druid.minIdle>
+				<druid.maxActive>20</druid.maxActive>
+				<druid.maxWait>60000</druid.maxWait>
+				<druid.timeBetweenEvictionRunsMillis>60000</druid.timeBetweenEvictionRunsMillis>
+				<druid.minEvictableIdleTimeMillis>300000</druid.minEvictableIdleTimeMillis>
+				<druid.validationQuery>SELECT 'x'</druid.validationQuery>
+				<druid.testWhileIdle>true</druid.testWhileIdle>
+				<druid.testOnBorrow>false</druid.testOnBorrow>
+				<druid.testOnReturn>false</druid.testOnReturn>
+				<druid.poolPreparedStatements>false</druid.poolPreparedStatements>
+				<druid.maxPoolPreparedStatementPerConnectionSize>20</druid.maxPoolPreparedStatementPerConnectionSize>
+				<druid.filters>stat</druid.filters>
+				<!-- 日志输出级别 -->
+				<logLevel>debug</logLevel>
+				<static.resource.url>http://192.168.4.120/resource/</static.resource.url>
+				<system.err.log.file>/tmp/logs/${project.artifactId}/sys-error.log</system.err.log.file>
+				<subId>currentSubId</subId>
+				<!-- 定时任务开启/关闭-->
+				<!--<quartz.start>on</quartz.start>-->
+				<quartz.start>off</quartz.start>
+				<!-- 定时任务邮件发送配置 -->
+				<mail.host>smtp.exmail.qq.com</mail.host>
+				<mail.from>wan***@chujiu-data.com</mail.from>
+				<mail.to>49352****@qq.com</mail.to>
+				<mail.user>wan***@chujiu-data.com</mail.user>
+				<mail.pwd>***</mail.pwd>
+			</properties>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Servlet jars -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+			<version>${servlet.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>${taglibs.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${jsp-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- spring framework -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${org.aspectj.aspectjweaver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId>
+			<version>${aopalliance.version}</version>
+		</dependency>
+		<!-- Spring security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-acl</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-aspects</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-cas</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-openid</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-remoting</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<!-- apache jars -->
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>${commons-collections.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>${commons-fileupload.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${commons-lang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${commons-beanutils.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.axis</groupId>
+		    <artifactId>axis</artifactId>
+		    <version>1.4</version>
+		</dependency>
+		<!-- mybatis jars -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>${mybatis-spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-ehcache</artifactId>
+			<version>${mybatis-ehcache.version}</version>
+		</dependency>
+		<!-- database jars -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
+		<!-- druid -->
+		<dependency>
+		     <groupId>com.alibaba</groupId>
+		     <artifactId>druid</artifactId>
+		     <version>${druid.version}</version>
+		</dependency>		
+		<!-- logger jars -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j-log4j12.version}</version>
+		</dependency>
+		<!-- sitemesh3 -->
+		<dependency>
+			<groupId>org.sitemesh</groupId>
+			<artifactId>sitemesh</artifactId>
+			<version>${sitemesh.version}</version>
+		</dependency>
+		<!-- freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
+		</dependency>
+		<!-- jackson dependency -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>${jackson.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${com.fasterxml.jackson.core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${com.fasterxml.jackson.core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${com.fasterxml.jackson.core.version}</version>
+		</dependency>
+		<!-- jcaptcha -->
+
+		<dependency>
+			<groupId>com.octo.captcha</groupId>
+			<artifactId>jcaptcha</artifactId>
+			<version>2.0-alpha-1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.octo.captcha</groupId>
+			<artifactId>jcaptcha-api</artifactId>
+			<version>2.0-alpha-1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.octo.captcha</groupId>
+			<artifactId>jcaptcha-integration-simple-servlet</artifactId>
+			<version>2.0-alpha-1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>servlet-api</artifactId>
+					<groupId>javax.servlet</groupId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jhlabs</groupId>
+			<artifactId>filters</artifactId>
+			<version>2.0.235</version>
+		</dependency><!-- -->
+		<!--ftp-->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>${commons-net.version}</version>
+		</dependency>
+		<!--json-->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
+		</dependency>
+		<!-- POI -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.14</version>
+		</dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.13-beta1</version>
+        </dependency>
+	    <!--Quartz-->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/ch.ethz.ganymed/ganymed-ssh2 -->
+		<dependency>
+			<groupId>ch.ethz.ganymed</groupId>
+			<artifactId>ganymed-ssh2</artifactId>
+			<version>262</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+		<!--websocket-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<!--skip deploy (this is just a test module) -->
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<source>${buildNumber}</source>
+					<target>${buildNumber}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>2.2</version>
+					<configuration>
+						<uriEncoding>UTF-8</uriEncoding>
+						<port>8080</port>
+						<path>/${project.artifactId}</path>
+					</configuration>
+					<executions>
+						<execution>
+							<id>tomcat-run</id>
+							<goals>
+								<goal>run</goal>
+							</goals>
+							<phase>pre-integration-test</phase>
+						</execution>
+						<execution>
+							<id>tomcat-shutdown</id>
+							<goals>
+								<goal>shutdown</goal>
+							</goals>
+							<phase>post-integration-test</phase>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<!-- 使用资源过滤器 -->
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<filters>
+			<filter>${project.basedir}/src/main/resources/conf/config.properties</filter>
+		</filters>
+	</build>
+
+</project>

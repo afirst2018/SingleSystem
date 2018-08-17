@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.sysuser.managerdao.UserDAO">
+	<select id="getSysUserList" resultType="com.chujiu.dto.UserDto">
+		SELECT id,USERNAME,REAL_NAME as realName,ENABLED,ACCOUNT_NON_EXPIRED as accountNonExpired,ACCOUNT_NON_LOCKED as accountNonLocked,CREDENTIALS_NON_EXPIRED as credentialsNonExpired,CREATE_ON as createOn,MODIFIED_ON as modifiedOn,MODIFIED_BY as modifiedBy FROM USER WHERE id != 1
+	</select>
+	<delete id="deleteUserRole" parameterType="long">
+		DELETE FROM user_role_rela WHERE user_id = #{id}
+	</delete>
+	<delete id="deleteUser" parameterType="long">
+		DELETE FROM user WHERE id = #{id}
+	</delete>
+	<delete id="deleteUserDetail" parameterType="long">
+		DELETE FROM user_detail WHERE user_id = #{id}
+	</delete>
+	<select id="getSysUserById" resultType="com.chujiu.dto.UserDto" parameterType="long">
+		SELECT id,PASSWORD as password,USERNAME,REAL_NAME as realName,ENABLED,ACCOUNT_NON_EXPIRED as accountNonExpired,ACCOUNT_NON_LOCKED as accountNonLocked,CREDENTIALS_NON_EXPIRED as credentialsNonExpired,CREATE_ON as createOn,MODIFIED_ON as modifiedOn,MODIFIED_BY as modifiedBy FROM USER WHERE id = #{id} limit 1
+	</select>
+	<select id="getSysUserByName" resultType="com.chujiu.dto.UserDto" parameterType="java.lang.String">
+		SELECT id,ENABLED as enabled,USERNAME,REAL_NAME as realName,ENABLED,ACCOUNT_NON_EXPIRED as accountNonExpired,ACCOUNT_NON_LOCKED as accountNonLocked,CREDENTIALS_NON_EXPIRED as credentialsNonExpired,CREATE_ON as createOn,MODIFIED_ON as modifiedOn,MODIFIED_BY as modifiedBy FROM USER WHERE USERNAME = #{username} limit 1
+	</select>
+	<!--new start-->
+	<!--  按条件分页查询系统管理员信息 -->
+	<select id="selectSysUserListPage" resultType="com.chujiu.dto.UserDto" parameterType="com.chujiu.dto.UserDto">
+			SELECT
+				U.ID,
+				U.USERNAME,
+				U.REAL_NAME as realName,
+				U.ENABLED,
+				CASE
+					WHEN U.ENABLED = '1' THEN '是'
+					WHEN U.ENABLED = '0' THEN '否'
+				END as enabledStr,
+				U.DISABLE_DESC as disableDesc,
+				U.CREATE_BY as createBy,
+				U.CREATE_ON as createOn,
+				DATE_FORMAT(U.CREATE_ON, '%Y-%m-%d %H:%i:%s') as createOnStr,
+				U.EMAIL,
+				U.MOBILE,
+				U.QQ,
+				U.SEX
+			FROM
+				USER U
+			WHERE U.ID != #{loginUserId}
+			AND U.ID != 1
+			<if test="entity != null">
+				<if test="entity.username != null and entity.username != ''">
+					AND U.USERNAME LIKE CONCAT('%',#{entity.username},'%')
+				</if>
+				<if test="entity.realName != null and entity.realName != ''">
+					AND U.REAL_NAME LIKE CONCAT('%',#{entity.realName},'%')
+				</if>
+				<if test="entity.mobile != null and entity.mobile != ''">
+					AND U.MOBILE LIKE CONCAT('%',#{entity.mobile},'%')
+				</if>
+				<if test="entity.enabledStr != null and entity.enabledStr != ''">
+					AND U.ENABLED =#{entity.enabledStr}
+				</if>
+			</if>
+			ORDER BY U.CREATE_ON DESC
+	</select>
+
+	<!--  按ID查询用户信息 -->
+	<select id="selectSysUserById" resultType="com.chujiu.dto.UserDto">
+		SELECT
+			U.ID,
+			U.USERNAME,
+			U.ENABLED,
+			U.ENABLED as enabledStr,
+			U.DISABLE_DESC as disableDesc,
+			U.CREATE_BY as createBy,
+			U.CREATE_ON as createOn,
+			U.EMAIL,
+			U.MOBILE,
+			U.REAL_NAME as realName,
+			U.QQ,
+			U.SEX
+		FROM USER U
+		WHERE U.ID=#{id}
+	</select>
+	<!-- 停用账号 -->
+	<update id="updateDisabledAccount">
+		UPDATE USER SET ENABLED=FALSE,DISABLE_DESC=#{reason},MODIFIED_ON=now(),MODIFIED_BY=#{loginUserId} where ID=#{id}
+	</update>
+	<!-- 启用账号 -->
+	<update id="updateEnabledAccount">
+		UPDATE USER SET ENABLED=TRUE ,DISABLE_DESC='',MODIFIED_ON=now(),MODIFIED_BY=#{loginUserId} where ID=#{id}
+	</update>
+
+	<!-- 修改user信息 -->
+	<update id="updateUser" parameterType="com.chujiu.dto.UserDto">
+		UPDATE USER
+		   SET REAL_NAME=#{entity.realName},
+			   SEX=#{entity.sex},
+			   MOBILE=#{entity.mobile},
+			   EMAIL=#{entity.email},
+			   QQ=#{entity.qq},
+			   MODIFIED_ON=now(),
+			   MODIFIED_BY=#{loginUserId}
+		WHERE ID = #{entity.id}
+	</update>
+	<!-- 修改密码 -->
+	<update id="updatePwd" parameterType="com.chujiu.dto.UserDto">
+		UPDATE USER SET PASSWORD=#{password},MODIFIED_ON=now(),MODIFIED_BY=#{modifiedBy} WHERE id=#{id}
+	</update>
+	<insert id="insertUser" keyProperty="id" useGeneratedKeys="true" parameterType="com.chujiu.dto.UserDto">
+		insert into user (USERNAME,PASSWORD,ENABLED,ACCOUNT_NON_LOCKED,CREATE_BY,CREATE_ON,MODIFIED_BY,MODIFIED_ON,ACCOUNT_NON_EXPIRED,CREDENTIALS_NON_EXPIRED,SEX,EMAIL,MOBILE,QQ,REAL_NAME) VALUES (#{username},#{password},TRUE,TRUE,#{createBy},#{createOn},#{modifiedBy},#{modifiedOn},TRUE,TRUE,#{sex},#{email},#{mobile},#{qq},#{realName})
+	</insert>
+	<!--校验账号（username）是否存在-->
+	<select id="checkSysUsername" resultType="int">
+		SELECT count(username) as cnt FROM user where username=#{username}
+	</select>
+</mapper>

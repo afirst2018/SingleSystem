@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" 
+	"http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd" >
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{ISO8601}] %-5p %c %t -> %m %n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="TRACE" />
+			<param name="LevelMax" value="FATAL" />
+		</filter>
+	</appender>
+
+	<appender name="STDERR" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.err" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{ISO8601}] %-5p %c %t -> %m %n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="WARN" />
+			<param name="LevelMax" value="FATAL" />
+		</filter>
+	</appender>
+
+	<!-- 系统应用级别日志 -->
+	<appender name="SYS_FILE" class="org.apache.log4j.RollingFileAppender">
+		<param name="threshold" value="error" />
+		<!-- <param name="file" value="${user.home}/logs/chujiu-error.log" /> -->
+		<param name="file" value="${system.err.log.file}" />
+		<param name="maxFileSize" value="100MB" />
+		<param name="maxBackupIndex" value="10" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%-5p][%d{yyyy-MM-dd HH:mm:ss,SSS}][%c] :%m%n" />
+		</layout>
+	</appender>
+
+	<!-- <category name="org.springframework">
+		<priority value="${logLevel}" />
+		<appender-ref ref="STDOUT" />
+	</category> -->
+
+	<logger name="com.ibatis">
+		<level value="${logLevel}" />
+	</logger>
+
+	<logger name="com.ibatis.common.jdbc.SimpleDataSource">
+		<level value="${logLevel}" />
+	</logger>
+
+	<logger name="com.ibatis.common.jdbc.ScriptRunner">
+		<level value="${logLevel}" />
+	</logger>
+
+	<logger name="com.ibatis.common.jdbc.SqlMapClientDelegate">
+		<level value="${logLevel}" />
+	</logger>
+
+	<logger name="java.sql.Connection">
+		<level value="${logLevel}" />
+	</logger>
+
+	<logger name="java.sql.Statement">
+		<level value="${logLevel}" />
+	</logger>
+
+	<logger name="java.sql.PreparedStatement">
+		<level value="${logLevel}" />
+	</logger>
+
+	<logger name="java.sql.ResultSet">
+		<level value="${logLevel}" />
+	</logger>
+
+	<root>
+		<priority value="${logLevel}" />
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="STDERR" />
+		<appender-ref ref="SYS_FILE" />
+	</root>
+</log4j:configuration>

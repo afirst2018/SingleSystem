@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.role.managerdao.RoleDAO">
+	<select id="getRoleList" resultType="com.chujiu.dto.RoleDto">
+		SELECT id,role_name as roleName,role_desc as roleDesc,STATUS FROM role where ROLE_NAME != 'ROLE_LOGIN' AND ROLE_NAME != 'ROLE_ANONYMOUS'
+	</select>
+	<select id="getRoleListByPage" resultType="com.chujiu.dto.RoleDto">
+		SELECT id,role_name as roleName,role_desc as roleDesc,STATUS FROM role where ROLE_NAME != 'ROLE_LOGIN' AND ROLE_NAME != 'ROLE_ANONYMOUS' AND STATUS='1'
+        <if test="name != null and name != ''">
+            AND role_name LIKE CONCAT('%',#{name},'%')
+        </if>
+        ORDER BY MODIFIED_ON DESC
+	</select>
+	<select id="getRoleById" parameterType="long" resultType="com.chujiu.dto.RoleDto">
+		SELECT id,role_name as roleName,role_desc as roleDesc,STATUS FROM role where id = #{id}
+	</select>
+	<select id="getRoleByName" parameterType="string" resultType="com.chujiu.dto.RoleDto">
+		SELECT id,role_name as roleName,role_desc as roleDesc,STATUS FROM role where role_name = #{name}
+	</select>
+	<insert id="addRole" parameterType="com.chujiu.dto.RoleDto" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO role (role_name,role_desc,CREATE_ON,CREATE_BY,MODIFIED_ON,MODIFIED_BY) VALUES(#{roleName},#{roleDesc},now(),#{userId},now(),#{userId})
+	</insert>
+	<update id="updateRole" parameterType="com.chujiu.dto.RoleDto">
+		update role set role_desc = #{roleDesc},MODIFIED_ON=now(),MODIFIED_BY=#{userId} where id = #{id}
+	</update>
+	<delete id="deleteRole" parameterType="long">
+		delete from role where id = #{id}
+	</delete>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.system.managerdao.SecurityDAO">
+	<!-- 查询每个资源（菜单）对应的所有角色 -->
+	<select id="selectAllResourceAndRoles" resultType="java.util.HashMap">
+		SELECT DISTINCT
+			M.MENU_NAME,
+			/* CONCAT(M.MENU_URL, '**') AS MENU_URL,*/
+			CONCAT(substring_index(M.MENU_URL, 'method_',1),'method_*/**') AS MENU_URL,
+			V_PRIV_ROLE.RNAME
+		FROM
+			PRIVILEGE_MENU_RELA P_M_R
+		INNER JOIN MENU M ON P_M_R.MENU_ID = M.ID
+		INNER JOIN PRIVILEGE P ON P_M_R.PRIVILEGE_ID = P.ID
+		INNER JOIN(
+			SELECT DISTINCT
+				P.PRIVILEGE_NAME AS PNAME,
+				R.ROLE_NAME AS RNAME
+			FROM
+				ROLE_PRIVILEGE_RELA R_P_R
+			INNER JOIN ROLE R ON R_P_R.ROLE_ID = R.ID
+			INNER JOIN PRIVILEGE P ON R_P_R.PRIVILEGE_ID = P.ID
+		)V_PRIV_ROLE ON V_PRIV_ROLE.PNAME = P.PRIVILEGE_NAME
+		WHERE 
+			M.ISLEAF = '1'
+		ORDER BY 
+			M.MENU_URL
+	</select>
+	<!-- 查询系统的所有角色 -->
+	<select id="selectAllRoles" resultType="java.lang.String">
+		SELECT ROLE_NAME FROM ROLE
+	</select>
+	<!-- 查询指定用户所具有的角色 -->
+	<select id="selectRolesByUsername" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT
+			R.ROLE_NAME
+		FROM
+			USER U
+		INNER JOIN USER_ROLE_RELA UR ON U.ID = UR.USER_ID
+		INNER JOIN ROLE R ON UR.ROLE_ID = R.ID
+		WHERE
+			U.USERNAME = #{username,jdbcType=VARCHAR}
+	</select>
+	<!--  按用户名查找用户 -->
+	<select id="selectUserByName" parameterType="java.lang.String" resultType="com.chujiu.dto.UserDto">
+		SELECT
+			ID,
+			USERNAME,
+			PASSWORD,
+			ENABLED,
+			ACCOUNT_NON_EXPIRED AS accountNonExpired,
+			ACCOUNT_NON_LOCKED AS accountNonLocked,
+			CREDENTIALS_NON_EXPIRED AS credentialsNonExpired,
+			DISABLE_DESC as disableDesc
+		FROM
+			USER
+		WHERE
+			USERNAME = #{username,jdbcType=VARCHAR}
+	</select>
+</mapper>

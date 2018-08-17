@@ -1,0 +1,144 @@
+html,body{height:100%}
+
+section{
+	position:relative;
+	top:0;
+	width:1203px;
+	min-width:1203px;
+	clear: both;
+}
+
+.top-icon{
+	margin-top:16px;
+	margin-left:192px;
+	width:132px;
+	height:64px;
+	background-image:url('../../images/logo.png');
+}
+
+.top-title{
+	margin-top:35px;
+	margin-left:22px;
+	color:#FFFFFF;
+	font-size:22px;
+}
+
+nav{
+	position:relative;
+	top:0;
+	left:0;
+	width:100%;
+	min-width:auto;
+	height:auto;
+	background-image:url('../../images/middle.png');
+	clear: both;
+}
+
+section > a > div{
+	color:blue;
+	text-align:center;
+	font-weight:bold;
+	top:10%;
+	font-size:24px;
+}
+
+.img1{
+	position:absolute;
+	top:10px;
+	left:10px;
+	width:788px;
+	height:446px;
+	background-image:url('img/01.jpg');
+	background-repeat:no-repeat;
+	z-index:1;
+}
+
+.img2{
+	position:absolute;
+	top:10px;
+	left:798px;
+	width:415px;
+	height:310px;
+	background-image:url('img/02.jpg');
+	background-repeat:no-repeat;
+	z-index:1;
+}
+
+.img3{
+	position:absolute;
+	top:456px;
+	left:10px;
+	width:483px;
+	height:264px;
+	background-image:url('img/03.jpg');
+	background-repeat:no-repeat;
+	z-index:1;
+}
+
+.img4{
+	position:absolute;
+	top:456px;
+	left:493px;
+	width:305px;
+	height:264px;
+	background-image:url('img/04.jpg');
+	background-repeat:no-repeat;
+	z-index:1;
+}
+
+.img5{
+	position:absolute;
+	top:320px;
+	left:798px;
+	width:415px;
+	height:400px;
+	background-image:url('img/05.jpg');
+	background-repeat:no-repeat;
+	z-index:1;
+}
+
+article{
+	position:relative;
+	top:0;
+	left:0;
+	width:100%;
+	min-width:1203px;
+	clear: both;
+	margin-bottom:10px;
+}
+
+.article1{
+	height:750px;
+	background-color:#FFFFFF;
+	border-bottom:4px solid #53aeb3;
+}
+
+.article2{
+	height:442px;
+}
+
+.article3{
+	height:642px;
+	background-color:#53aeb3;
+}
+
+article > section > div{
+	position:relative;
+}
+
+
+.bottom-dimensional{
+	margin-top:37px;
+	margin-left:220px;
+	width:220px;
+	height:127px;
+	background-image:url('../../images/dimensional.png');
+}
+
+.bottom-tel{
+	margin-top:70px;
+	margin-left:220px;
+	width:330px;
+	height:92px;
+	background-image:url('../../images/tel.png');
+}

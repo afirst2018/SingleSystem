@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.menumanage.managerdao.MenuManageDAO">
+	<resultMap type="com.chujiu.dto.MenuDto" id="menuEntity">
+		<id column="ID" property="id" />
+		<result column="MENU_NAME" property="menuName" />
+		<result column="ORDER_NUM" property="orderNum" />
+		<result column="PARENT_ID" property="parentId" />
+		<result column="MENU_URL" property="menuUrl" />
+		<result column="IMAGE" property="image" />
+		<result column="MENU_TYPE" property="menuType" />
+		<result column="ISLEAF" property="isleaf" />
+	</resultMap> 
+	<resultMap type="com.chujiu.dto.MenuTreeNode" id="menuTreeNode">
+		<id column="ID" property="id" />
+		<result column="MENU_NAME" property="menuName" />
+		<result column="ORDER_NUM" property="orderNum" />
+		<result column="PARENT_ID" property="parentId" />
+		<result column="MENU_URL" property="menuUrl" />
+		<result column="IMAGE" property="image" />
+	</resultMap> 
+
+	<!-- 查询全部菜单信息 -->
+	<select id="queryMenu" resultType="com.chujiu.dto.MenuDto" resultMap="menuEntity">
+		SELECT ID,MENU_NAME,ORDER_NUM,PARENT_ID,MENU_URL,IMAGE,MENU_TYPE,ISLEAF FROM MENU WHERE MENU_TYPE=1 ORDER BY ORDER_NUM ASC
+	</select>
+	<!-- 查询全部菜单展示权限信息 -->
+	<select id="queryMenuForPrivilege" resultType="com.chujiu.dto.MenuDto" resultMap="menuEntity">
+		SELECT ID,MENU_NAME,ORDER_NUM,PARENT_ID,MENU_URL,IMAGE,MENU_TYPE,ISLEAF FROM MENU WHERE MENU_TYPE=1 OR MENU_TYPE=2 ORDER BY ORDER_NUM ASC
+	</select>
+	<!-- 查询全部菜单信息 -->
+	<select id="queryMenuById" parameterType="String" resultMap="menuEntity">
+		SELECT ID,MENU_NAME,ORDER_NUM,PARENT_ID,MENU_URL,IMAGE,MENU_TYPE,ISLEAF FROM MENU WHERE ID= #{id,jdbcType=BIGINT}
+	</select>
+	
+	<!-- 新增菜单信息 -->
+	<insert id="insertMenu" keyProperty="id" useGeneratedKeys="true" parameterType="com.chujiu.dto.MenuDto">
+		 insert into menu (ID,MENU_NAME,ORDER_NUM,PARENT_ID,MENU_URL,IMAGE,MENU_TYPE,ISLEAF) values (#{id,jdbcType=BIGINT},#{menuName,jdbcType=VARCHAR},#{orderNum,jdbcType=SMALLINT},#{parentId,jdbcType=BIGINT},#{menuUrl,jdbcType=VARCHAR},#{image,jdbcType=VARCHAR},#{menuType,jdbcType=CHAR},#{isleaf,jdbcType=CHAR})
+	</insert>
+	
+	<!-- 修改菜单信息 -->
+	<update id="updateMenu" parameterType="com.chujiu.dto.MenuDto">
+		update menu set MENU_NAME=#{menuName,jdbcType=VARCHAR},ORDER_NUM=#{orderNum,jdbcType=SMALLINT}
+		<!-- TODO chujiu sul 开发用分支，开发完后需删除该分支 -->
+		<if test="menuUrl != null and menuUrl != ''">
+			,MENU_URL=#{menuUrl,jdbcType=VARCHAR}
+		</if>
+		<if test="image != null and image != ''">
+			,IMAGE=#{image,jdbcType=VARCHAR}
+		</if>
+		<if test="isleaf != null and isleaf != ''">
+			,ISLEAF=#{isleaf,jdbcType=VARCHAR}
+		</if>
+		where id=#{id,jdbcType=BIGINT}
+	</update>
+	
+	<!-- 删除菜单信息 -->
+	<delete id="deleteMenuById" parameterType="long">
+		delete from menu where id=#{id}
+	</delete>
+	
+	<!-- 判断菜单是否被引用 -->
+	<select id="checkRef" resultType="int">
+		SELECT count(*) FROM MENU WHERE PARENT_ID=#{id}
+	</select>
+
+	<!-- 优化性能查询 -->
+	<!-- 查询所有非叶子节点 -->
+	<select id="selectParentNodes" resultMap="menuTreeNode">
+		<![CDATA[  SELECT * FROM MENU WHERE ISLEAF = 0 AND MENU_TYPE='1']]>
+	</select>
+	<!-- 查询所有权限对应的菜单(MENU_TYPE 为1的才是显示用的菜单) -->
+	<select id="selectAllLeafNodesWithRole" resultType="com.chujiu.dto.MenuTreeNode">
+		SELECT R.ROLE_NAME AS ROLENAME,
+			   M.ID,
+			   M.MENU_NAME AS MENUNAME,
+			   M.MENU_URL AS MENUURL,
+			   M.PARENT_ID AS PARENTID,
+			   M.IMAGE,
+			   M.ORDER_NUM AS orderNum
+		FROM ROLE R, ROLE_PRIVILEGE_RELA RPR, PRIVILEGE P, PRIVILEGE_MENU_RELA PMR, MENU M 
+		WHERE R.ID = RPR.ROLE_ID AND 
+		      RPR.PRIVILEGE_ID = P.ID AND 
+		      P.ID = PMR.PRIVILEGE_ID AND 
+		      PMR.MENU_ID = M.ID 
+		      AND M.ISLEAF = '1'
+		      AND M.MENU_TYPE='1'
+	</select>
+	<!-- 优化性能查询 -->
+</mapper>

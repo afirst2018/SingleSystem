@@ -1,0 +1,122 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security 
+						http://www.springframework.org/schema/security/spring-security.xsd">
+	<http security="none" pattern="/**/favicon.ico"/>
+	<http security="none" pattern="/**/*.jpg"/>
+	<http security="none" pattern="/**/*.png"/>
+	<http security="none" pattern="/**/*.gif"/>
+	<http security="none" pattern="/**/*.css"/>
+	<http security="none" pattern="/**/*.js"/>
+	<http security="none" pattern="/**/*.less"/>
+	<http security="none" pattern="/**/*.eot"/>
+	<http security="none" pattern="/**/*.svg"/>
+	<http security="none" pattern="/**/*.ttf"/>
+	<http security="none" pattern="/**/*.woff"/>
+	<http security="none" pattern="/**/*.woff2"/>
+	<http security="none" pattern="/**/*.otf"/>
+	<http security="none" pattern="/**/*.scss"/>
+	<http security="none" pattern="/sessionTimeout.html"/>
+	<http security="none" pattern="/accessDenied.html"/>
+	<http security="none" pattern="/expired.html"/>
+	<http security="none" pattern="/pageNotFound.html"/>
+	<http security="none" pattern="/login.html**"/>
+	<http security="none" pattern="/druid**"/>
+	<http security="none" pattern="/appcommon.html"/>
+	<http security="none" pattern="/error.html"/>
+	<http auto-config="false" entry-point-ref="authenticationEntryPoint">
+		<custom-filter ref="customFilterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR" />
+		<custom-filter ref="customLogoutFilter" position="LOGOUT_FILTER" />
+		<custom-filter before="FORM_LOGIN_FILTER" ref="loginFilter"/>
+		<custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
+		<session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" invalid-session-url="/sessionTimeout.html" />
+		<access-denied-handler ref="customAccessDeniedHandler" />
+	</http>
+
+	<beans:bean id="authenticationEntryPoint" class="com.chujiu.security.access.AuthenticationEntryPoint">
+		<beans:property name="loginFormUrl" value="/login.html" />
+	</beans:bean>
+
+	<beans:bean id="customFilterSecurityInterceptor" class="com.chujiu.security.interceptor.CustomFilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="accessDecisionManager" ref="customAccessDecisionManager" />
+		<beans:property name="securityMetadataSource" ref="invocationSecurityMetadataSource" />
+	</beans:bean>
+	<beans:bean id="customAccessDecisionManager" class="com.chujiu.security.authorization.CustomAccessDecisionManager"/>
+	<beans:bean id="invocationSecurityMetadataSource" class="com.chujiu.security.access.InvocationSecurityMetadataSource">
+		<beans:property name="cllCustomSecurityService" ref="myCllCustomSecurityService" />
+	</beans:bean>
+	<beans:bean id="myCllCustomSecurityService" class="com.chujiu.manager.system.managerservice.CustomSecurityService"/>
+	<beans:bean id="webPrivilegeEvaluator" class="org.springframework.security.web.access.DefaultWebInvocationPrivilegeEvaluator">
+		<beans:constructor-arg ref="customFilterSecurityInterceptor" />
+	</beans:bean>
+
+	<beans:bean id="customLogoutFilter" class="com.chujiu.security.authorization.CustomLogoutFilter">
+		<beans:property name="filterProcessesUrl" value="/sys_logout.html" />
+		<beans:constructor-arg index="0" value="/login.html" />
+		<beans:constructor-arg index="1">
+			<beans:array>
+				<beans:bean id="customLogoutSuccessHandler" class="com.chujiu.security.authorization.CustomLogoutHandler" />
+				<beans:bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+				<beans:bean id="cookieClearingLogoutHandler" class="org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler" >
+					<beans:constructor-arg index="0" value="JSESSIONID" />
+				</beans:bean>
+			</beans:array>
+		</beans:constructor-arg>
+	</beans:bean>
+
+	<beans:bean id="loginFilter" class="com.chujiu.security.authorization.UsernamePasswordAuthenticationFilter">
+		<beans:property name="filterProcessesUrl" value="/checkLogin.html"/>
+		<beans:property name="usernameParameter" value="username"/>
+		<beans:property name="passwordParameter" value="password"/>
+		<beans:property name="postOnly" value="false"/>
+		<beans:property name="authenticationFailureHandler" ref="failureHandler"/>
+		<beans:property name="authenticationSuccessHandler" ref="successHandler"/>
+		<beans:property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy" />
+		<beans:property name="authenticationManager" ref="authenticationManager"/>
+	</beans:bean>
+
+	<beans:bean id="failureHandler" class="com.chujiu.security.authorization.AuthenticationWithJsonpFailureHandler">
+		<beans:property name="defaultFailureUrl" value="/login.html" />
+	</beans:bean>
+	<beans:bean id="successHandler" class="com.chujiu.security.authorization.AuthenticationWithJsonpSuccessHandler">
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true"/>
+		<beans:property name="defaultTargetUrl" value="/index.html"/>
+	</beans:bean>
+		<beans:bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+		<beans:constructor-arg name="sessionRegistry" ref="sessionRegistry" />
+		<beans:property name="maximumSessions" value="1" />
+		<beans:property name="exceptionIfMaximumExceeded" value="false" />
+	</beans:bean>
+	
+	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+	
+	<beans:bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+		<beans:property name="sessionRegistry" ref="sessionRegistry" />
+		<beans:property name="expiredUrl" value="/expired.html" />
+	</beans:bean>
+
+	<authentication-manager erase-credentials="false" alias="authenticationManager">
+		<authentication-provider ref="daoAuthenticationProvider" />
+	</authentication-manager>
+	<beans:bean id="daoAuthenticationProvider" class="com.chujiu.security.authorization.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="myUserDetailService" />
+		<beans:property name="passwordEncoder" ref="passwordEncoder" />
+		<beans:property name="autoPassValue" value="R3NjkwNzY==" />
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+	</beans:bean>
+	<beans:bean id="myUserDetailService" class="com.chujiu.manager.system.managerservice.CustomUserDetailService"/>
+	<!-- 使用密码加密(使用MD5加密和Base64编码) -->
+	<beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder">
+		<beans:constructor-arg value="MD5" />
+		<beans:constructor-arg value="true" />
+	</beans:bean>
+	
+	<beans:bean id="customAccessDeniedHandler" class="com.chujiu.security.access.CustomAccessDeniedHandler">
+		<beans:property name="errorPage" value="/accessDenied.html" />
+	</beans:bean>
+
+</beans:beans>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <title>公告管理</title>
+    <link rel="stylesheet" href="${basePath}/resource/css/bootstrapValidator.min.css" />
+    <link rel="stylesheet" href="${basePath}/resource/css/plugins/datepicker/datepicker3.css" />
+    <link rel="stylesheet" href="${basePath}/resource/css/plugins/jasny/jasny-bootstrap.min.css" />
+    <script type="text/javascript" src="${basePath}/resource/js/main.js"></script>
+    <script type="text/javascript" src="${basePath}/resource/js/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="${basePath}/resource/js/plugins/way/way.min.js"></script>
+    <script type="text/javascript">
+        var basePath = "${basePath}";
+    </script>
+    <script type="text/javascript" src="${basePath}/resource/js/notice/index.js"></script>
+    <script type="text/javascript" src="${basePath}/resource/js/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="${basePath}/resource/js/bootstrap-dialog.min.js"></script>
+    <script type="text/javascript" src="${basePath}/resource/js/plugins/jasny/jasny-bootstrap.min.js"></script>
+    <style type="text/css">
+		table {
+			table-layout: fixed; /* 只有定义了表格的布局算法为fixed，下面td的定义才能起作用 */
+		}
+		
+		td {
+			width: 100%;
+			word-break: keep-all; /*  不换行 */
+			white-space: nowrap; /* 不换行 */
+			overflow: hidden; /* 内容超出宽度时隐藏超出部分的内容 */
+			text-overflow: ellipsis;
+			/* 当对象内文本溢出时显示省略标记(...)；需与overflow:hidden;一起使用。*/
+		}
+		
+		td:hover .productinfo {
+			display: block;
+		}
+		
+		.productinfo {
+			display: none;			
+			list-style: none;
+			position: absolute;
+			border: 1px solid #999;
+			margin: 0;
+			padding: 0;			
+			width: auto;
+			background: #fff;
+			border-radius: 5px;
+		}
+		.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td,
+		.table>tbody>tr>td, .table>tfoot>tr>td {
+			vertical-align: middle;
+		}
+		
+		.label {
+			font-size: 13px;
+		}
+		
+		.login-dialog .modal-dialog {
+			width: 1000px;
+		}
+	</style>
+</head>
+<body>
+<headline>公告管理</headline>
+<subheadline>
+    <ol class="breadcrumb">
+        <li><a href="#">系统管理</a></li>
+        <li class="active">公告管理</li>
+    </ol>
+</subheadline>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>公告列表</h5>
+            </div>
+            <div class="ibox-content">
+
+                <form id="form1" class="form-inline" style="margin-top: 0px; margin-right: 0px;margin-bottom:20px;" way-data="searchNotice">
+                    <div class="form-group" id="data_5">
+                        <div class="input-daterange input-group" id="datepicker">
+                            <input type="text" class="input-sm form-control" name="startdate" id="startdate" style = "height:34px;" maxLength="10" placeholder="修改日期（起）"/>
+                            <span class="input-group-addon">至</span>
+                            <input type="text" class="input-sm form-control" name="enddate"  id="enddate" style = "height:34px;" maxLength="10" placeholder="修改日期（止）"/>
+                        </div>
+                    </div>
+                    <input class="input-xlarge form-control" placeholder="公告内容" id="noticeCon" name="noticeCon" type="text" maxlength="150">
+                    <button id="searchBtn" type="button" class="btn btn-primary" style="margin-bottom:0px;margin-top:0px;" onclick='selectNotice();'>
+                    	<i class="fa fa-search"></i> 查询
+                    </button>
+                    <button type="button" class="btn btn-white" style="margin-bottom:0px;margin-top:0px;" onclick='clearForm();'>
+                    	<i class="fa fa-eraser"></i> 清空
+                    </button>
+                    <button type="button" class="btn btn-primary" style="margin-bottom:0px;margin-top:0px;" onclick='addNotice();'><i class="fa fa-plus"></i> 新增</button>
+                </form>
+                <div class="table-responsive">
+                    <table id="notice" class="table table-striped responsive-utilities jambo_table"></table>
+                    <div id="pageDiv"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新增/修改公告 start -->
+<div class="modal fade" id="noticeDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="addForm" way-data="notice" way-persistent="true">
+                	<input type="text" name="id" id="idTxt" style="display:none"/>
+                	<div class="form-group">
+                        <label for="noticeText">公告内容<font style="color:#a94442;">*</font></label>
+                        <textarea class="form-control" name="noticeText" id="noticeText" required maxLength="500" style="resize:none;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>是否显示<font style="color:#a94442;">*</font></label>
+                        <input type="radio" name="needShow" value="1" required="required">是
+						<input type="radio" name="needShow" value="0" required="required">否
+                    </div>
+                    <div class="form-group">
+                        <label for="orderNum">排序序号<font style="color:#a94442;">*</font><span style="color:#f8ac59;"> （最多输入3位大于0的整数）</span></label> <input type="text" class="form-control" name="orderNum" id="orderNum" required pattern="^([1-9]\d*)$" maxLength="3"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">                
+                <button type="button" class="btn btn-primary" onclick = "doValidate();">
+					<i class="fa fa-save"> 保存</i>
+				</button>
+				<button type="button" class="btn btn-white" data-dismiss="modal" >
+					<i class="fa fa-times"> 取消</i>
+				</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 新增/修改公告 end -->
+</body>
+</html>

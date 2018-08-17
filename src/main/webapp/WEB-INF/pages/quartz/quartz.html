@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<title>定时任务管理</title>
+		<link rel="stylesheet" href="${basePath}/resource/css/bootstrapValidator.min.css" />
+		<script type="text/javascript" src="${basePath}/resource/js/bootstrapValidator.min.js"></script>
+		<script type="text/javascript" src="${basePath}/resource/js/plugins/way/way.min.js"></script>
+		<script type="text/javascript">
+			var codeList = ${codeList};
+		</script>
+		<script type="text/javascript" src="${basePath}/resource/js/quartz/quartz.js"></script>
+		<style type="text/css">
+			table {
+				table-layout: fixed; /* 只有定义了表格的布局算法为fixed，下面td的定义才能起作用 */
+			}
+			
+			td {
+				width: 100%;
+				word-break: keep-all; /*  不换行 */
+				white-space: nowrap; /* 不换行 */
+				overflow: hidden; /* 内容超出宽度时隐藏超出部分的内容 */
+				text-overflow: ellipsis;
+				/* 当对象内文本溢出时显示省略标记(...)；需与overflow:hidden;一起使用。*/
+			}
+			td:hover .productinfo {
+				display: block;
+			}
+			label{
+				font-weight:200;
+			}
+		</style>
+	</head>
+	<body>
+		<headline>定时任务管理</headline>
+		<subheadline>
+			<ol class="breadcrumb">  
+				<li><a>系统管理</a></li>
+				<li class="active">定时任务管理</li>
+			</ol>
+		</subheadline>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>定时任务列表</h5>
+						<span class="label label-warning pull-right" id="quartzStatus"></span>
+					</div>
+					<div class="ibox-content">
+						<div class="search-well">
+						<form class="form-inline" style="margin-top:0px;margin-right:0px;margin-bottom:20px;" id="searchForm">
+							<input class="input-xlarge form-control" placeholder="任务名称" id="jobName" type="text">
+							<input class="input-xlarge form-control" placeholder="任务分组" id="jobGroup" type="text">
+							<!-- <input class="input-xlarge form-control" placeholder="备注" id="remarkConditionTxt" type="text"> -->
+							<button id="searchBtn" type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick = 'queryScheduleJob();'><i class="fa fa-search"></i> 查询</button>
+							<button type="button" class="btn btn-white" style="margin-bottom:0px;" onclick = 'clearConditionInput();'><i class="fa fa-eraser"></i> 清空</button>
+						</form>
+						</div>
+						<div class="table-responsive">
+							<table id="jobTable" class="table table-striped responsive-utilities jambo_table"></table>
+							<div id="pageDiv"></div>
+						</div>
+						<!--<div class="col-sm-6 col-fixed">
+							<pre way-data="__all__" way-json="true" way-default="{}"></pre>
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 修改定时任务 start -->
+		<div class="modal fade" id="addCodeListDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel"></h4>
+					</div>
+					<div class="modal-body">
+						<form id="updateForm" way-data="updateForm">
+							<input type="hidden" name="id" id="idTxt"/>
+							<div class="form-group">
+								<label for="jobNameText">任务名称<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="jobName" id="jobNameText" required/>
+							</div>
+							<div class="form-group">
+								<label for="jobGroupTxt">任务分组<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="jobGroup" id="jobGroupTxt" required/>
+							</div>
+							<div class="form-group">
+								<label for="jobStatusTxt">任务状态<font style="color:#a94442;">*</font></label>
+								<select class="form-control" name="jobStatus" id="jobStatusTxt" required>
+									<option value="0">禁用</option>
+									<option value="1">启用</option>
+									<option value="2">删除</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="isOrderByTxt">是否按顺序执行<font style="color:#a94442;">*</font></label>
+								<select class="form-control" name="isOrderBy" id="isOrderByTxt" required>
+									<option value="0">否</option>
+									<option value="1">是</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="orderNoTxt">任务执行顺序<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="orderNo" id="orderNoTxt" pattern="^([1-9]\d*)$"/>
+							</div>
+							<div class="form-group">
+								<label for="descriptionTxt">任务描述<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="description" id="descriptionTxt" required/>
+							</div>
+							<div class="form-group">
+								<label for="beanClassTxt">任务执行时调用的任务类</label> <input type="text" class="form-control" name="beanClass" id="beanClassTxt" maxLength="100" disabled/>
+							</div>
+							<div class="form-group">
+								<label for="cronExpressionTxt">cron表达式<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="cronExpression" id="cronExpressionTxt" required/>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick = "doValidate();"><i class="fa fa-save"></i> 保存</button>
+						<button type="button" class="btn btn-white" data-dismiss="modal" ><i class="fa fa-times"></i> 取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 修改定时任务 end -->
+	</body>
+</html>

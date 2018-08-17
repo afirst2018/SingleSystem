@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="${basePath}/resource/css/bootstrap.min.css" rel="stylesheet">
+		<link href="${basePath}/resource/font-awesome/css/font-awesome.css" rel="stylesheet">
+		<link href="${basePath}/resource/css/animate.css" rel="stylesheet">
+		<link href="${basePath}/resource/css/style.css" rel="stylesheet">
+	</head>
+	<body class="gray-bg">
+		<div class="middle-box text-center animated fadeInDown">
+			<div style="font-size:100px">Exception</div>
+			<div class="error-desc">${errorMsg}</div>
+			<a href="${basePath}/sys_logout.html" class="btn btn-primary m-t">注销登录</a>
+			<a href="${basePath}/index.html" class="btn btn-primary m-t">返回首页</a>
+			<a href="javascript:showError();" class="btn btn-primary m-t" id="excptionBtn">异常详情</a>
+			<div class="alert alert-danger" style="margin-top: 15px; display: none; word-break: break-all;" id="exceptionDetialDiv">
+				${errorDetail}
+			</div>
+			<script>
+				function showError(){
+					if($('#exceptionDetialDiv').is(':hidden')) {
+						$('#exceptionDetialDiv').show();
+					} else {
+						$('#exceptionDetialDiv').hide();
+					}
+				}
+			</script>
+
+		</div>
+	</body>
+	<!-- Mainly scripts -->
+	<script src="${basePath}/resource/js/jquery-2.1.1.js"></script>
+	<script src="${basePath}/resource/js/bootstrap.min.js"></script>
+
+
+</html>

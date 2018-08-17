@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><sitemesh:write property='title' /></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- CSS -->
+	<link rel="stylesheet" href="${basePath}/resource/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="${basePath}/resource/font-awesome/css/font-awesome.css" />
+	<link rel="stylesheet" href="${basePath}/resource/css/plugins/toastr/toastr.min.css" />
+	<link rel="stylesheet" href="${basePath}/resource/css/animate.css" />
+	<link rel="stylesheet" href="${basePath}/resource/css/plugins/chosen/chosen.css" />
+	<link rel="stylesheet" href="${basePath}/resource/css/style.css" />
+	<link rel="stylesheet" href="${basePath}/resource/css/bootstrapValidator.min.css"/>
+	<!-- JavaScript -->
+	<script type="text/javascript" src="${basePath}/resource/js/jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/jquery.bootstrap.min.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/jquery.dialog.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/inspinia.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/bootstrapValidator.min.js"></script>
+	<script type="text/javascript">
+		var basePath = '${basePath}';
+		var roleNames='${roleNames}';
+	</script>
+	<script type="text/javascript" src="${basePath}/resource/js/springSecurityAjaxHandler.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/common.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/template.js"></script>
+	<sitemesh:write property='head'/>
+</head>
+<#assign headline><sitemesh:write property='headline' /></#assign>
+<#assign subheadline><sitemesh:write property='subheadline' /></#assign>
+<body class="pace-done">
+	<div id="wrapper">
+		<nav class="navbar-default navbar-static-side" role="navigation">
+			<div class="sidebar-collapse">
+				<ul class="nav" id="side-menu">
+					<li class="nav-header">
+						<div class="dropdown profile-element" style="text-align:center;">
+							<span><img alt="image" style="with:48px;height:48px;" class="img-circle" src="${basePath}/resource/img/default_user.jpg" /></span>
+							<a data-toggle="dropdown" class="dropdown-toggle" style="cursor: default;">
+								<span class="block m-t-xs"> <strong class="font-bold">${username}<!-- <b class="caret"></b> --></strong></span>
+							</a>
+							<a data-toggle="dropdown" class="dropdown-toggle">
+								<span class="block m-t-xs"> <strong class="font-bold"><!-- <b class="caret"></b> --></strong></span>
+							</a>
+							<!-- <ul class="dropdown-menu animated fadeInRight m-t-xs">
+								<li><a href="profile.html">个人中心</a></li>
+								<li class="divider"></li>
+								<li><a href="${basePath}/sys_logout.html">退 出</a></li>
+							</ul> -->
+						</div>
+					</li>
+					<#if menuNodes?exists>
+						<#if menuNodes.nodes?? && menuNodes.nodes?size gt 0 >
+							<#list menuNodes.nodes as oneLevel>
+								<li><a href="#"><i class="fa ${oneLevel.image}" style="width:14px;"></i> <span class="nav-label">${oneLevel.menuName}</span><#if menuNodes.nodes?size gt 0> <span class="fa arrow"></span></#if></a>
+									<#if oneLevel.nodes?? && oneLevel.nodes?size gt 0>
+										<#list oneLevel.nodes as twoLevel>
+											<#assign url><#if twoLevel.nodes?? && twoLevel.nodes?size lt 1>${basePath}${twoLevel.menuUrl}</#if></#assign>
+											<ul class="nav nav-second-level">
+												<li><a href="${basePath}${twoLevel.menuUrl}">${twoLevel.menuName}<#if twoLevel.nodes?? && twoLevel.nodes?size gt 0> <span class="fa arrow"></span></#if></a>
+													<#if twoLevel.nodes?? && twoLevel.nodes?size gt 0>
+														<ul class="nav nav-third-level">
+															<#list twoLevel.nodes as threeLevel>
+																<li><a href="${basePath}${threeLevel.menuUrl}">${threeLevel.menuName}</a></li>
+															</#list>
+														</ul>
+													</#if>
+												</li>
+											</ul>
+										</#list>
+									</#if>
+								</li>
+							</#list>
+						</#if>
+					</#if>
+				</ul>
+			</div>
+		</nav>
+
+		<div id="page-wrapper" class="gray-bg dashbard-1">
+			<div class="row border-bottom">
+				<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+					<div class="navbar-header">
+						<a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="${basePath}/index.html"><i class="fa fa-home fa-lg"></i> </a>
+						<form role="search" class="navbar-form-custom">
+							<div style="width:500px;margin-top:15px;">
+								<span  style="font-size:20px;width:100px;margin-left:10px;">初九数据科技后台管理系统</span>
+							</div>
+						</form>
+					</div>
+					<ul class="nav navbar-top-links navbar-right">
+						<li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench" title="子系统"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                            	<#if subSystemList?? && subSystemList?size gt 0 >
+									<#list subSystemList as subSystem>
+										<li><a href="${subSystem.subUrl}?subId=${subSystem.subId}&username=${username}">${subSystem.subName}</a></li>
+									</#list>
+								</#if>
+                            </ul>
+                        </li>
+						<li class="dropdown">
+							<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+								<i class="fa fa-key" title="修改密码"></i>
+							</a>
+							<ul class="dropdown-menu dropdown-alerts">
+								<li>
+									<div class="ibox" style="margin-bottom: 0px;">
+										<div class="ibox-title">
+											<h5>修改登录密码</h5>
+										</div>
+										<div class="ibox-content" style="padding-bottom: 0px;">
+											<div class="row">
+												<div class="col-sm-12">
+													<form role="form" id="pwdUpdForm">
+														<div class="form-group"><label style="font-weight:200;">原密码&nbsp;<font style="color:#a94442;">*</font></label> <input type="password" name="opwd" class="form-control"></div>
+														<div class="form-group"><label style="font-weight:200;">新密码&nbsp;<font style="color:#a94442;">*</font></label> <input type="password" name="npwd" id="npwdTxt" class="form-control"></div>
+														<div class="form-group"><label style="font-weight:200;">确认密码&nbsp;<font style="color:#a94442;">*</font></label> <input type="password" name="qpwd" class="form-control"></div>
+														<div>
+															<button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="margin-top: 5px;"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</button>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a href="${basePath}/sys_logout.html">
+								<i class="fa fa-sign-out"></i> 退  出
+							</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+
+			<div class="row wrapper border-bottom white-bg page-heading" >
+				<div class="col-lg-10" >
+					<h2><sitemesh:write property='headline' /></h2>
+					<sitemesh:write property='subheadline' />
+				</div>
+			</div>
+			<div class="wrapper wrapper-content animated fadeInRight">
+				<sitemesh:write property='body' />
+			</div>
+			
+			<!--  会话超时提醒start -->
+			<div class="modal fade" id="sessionTimeoutDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" id="myModalLabel">会话超时</h4>
+						</div>
+						<div class="modal-body">
+							当前会话已超时，请重新登录。
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick = "jumpToLogin();" style="margin-bottom:5px;">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  会话超时提醒 end -->
+			<!--  ajax请求无权访问提示start -->
+			<div class="modal fade" id="accessDeniedDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" id="myModalLabel1">消息提示</h4>
+						</div>
+						<div class="modal-body">
+							您不具有该操作的权限，请联系管理员确认。
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick = "$('#accessDeniedDiv').modal('hide');" style="margin-bottom:5px;">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  ajax请求无权访问提示 end -->
+			<!--  会话超时提醒start -->
+			<div class="modal fade" id="expiredDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" id="myModalLabel2">消息提示</h4>
+						</div>
+						<div class="modal-body">
+                            您的帐号已在别处登录！如非本人操作，请及时修改密码。
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick = "jumpToLogin();" style="margin-bottom:5px;">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  会话超时提醒 end -->
+			<!--  异常提醒start -->
+			<div class="modal fade" id="errorDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" id="myModalLabel3">消息提示</h4>
+						</div>
+						<div class="modal-body">
+                           <div id ="expiredDiv_errorMsg"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick = "jumpToLogin();" style="margin-bottom:5px;">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 异常提醒 end -->
+			<div class="footer">
+				<p><strong>Copyright</strong> © 2016 <!--<a href="#" target="_blank"></a>--> 版权所有 初九数据科技（上海）有限公司</p>
+			</div>
+	</div>
+</body>
+<script>
+	var h_headline = $(".breadcrumb a:first").html();
+	var h_subheadline = $(".breadcrumb li[class='active']:eq(0)").html();
+	var h_subheadline2 = $(".breadcrumb li[class='active']:eq(1)").html();
+	$('.nav-label').each(function() {
+		if ($(this).html() == h_headline) {
+			$(this).parent().parent().attr('class', 'active');
+			$(this).parent().nextAll().each(function() {
+				if ($(this).children().eq(0).children().eq(0).nextAll().length > 0) {// 有第三级菜单时
+					$(this).children().eq(0).children().eq(0).nextAll().children().each(function() {
+						if ($(this).children().eq(0).html() == h_subheadline2) {
+							$(this).parent().parent().attr('class', 'active');//设定二级菜单的激活状态
+							$(this).attr('class', 'active');//设定三级菜单的激活状态
+						}
+					});
+				} else {// 只有二级菜单时
+					if ($(this).children().eq(0).children().eq(0).html().trim() == h_subheadline) {
+						$(this).children().eq(0).attr('class', 'active');
+					}
+				}
+			});
+		}
+	});
+</script>
+</html>

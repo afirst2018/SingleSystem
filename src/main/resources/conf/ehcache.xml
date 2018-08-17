@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+	<diskStore path="user.home/web_ehcache/" />
+	<defaultCache
+			maxElementsInMemory="3000"
+			eternal="false"
+			timeToIdleSeconds="3600"
+			timeToLiveSeconds="3600"
+			overflowToDisk="true"
+			diskPersistent="false"
+			diskExpiryThreadIntervalSeconds="100"
+			memoryStoreEvictionPolicy="LRU" />
+	<cache name="menuCache"
+		maxElementsInMemory="3000"
+		eternal="true"
+		overflowToDisk="true"
+		timeToIdleSeconds="0"
+		timeToLiveSeconds="0"
+		memoryStoreEvictionPolicy="LFU" />
+	<cache name="codeListCache"
+		   maxElementsInMemory="3000"
+		   eternal="true"
+		   overflowToDisk="true"
+		   timeToIdleSeconds="0"
+		   timeToLiveSeconds="0"
+		   memoryStoreEvictionPolicy="LFU" />
+	<cache name="userListCache"
+		   maxElementsInMemory="3000"
+		   eternal="true"
+		   overflowToDisk="true"
+		   timeToIdleSeconds="0"
+		   timeToLiveSeconds="0"
+		   memoryStoreEvictionPolicy="LFU" />
+</ehcache>

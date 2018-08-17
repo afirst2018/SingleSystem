@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<title>角色管理</title>
+	<link rel="stylesheet" href="${basePath}/resource/css/bootstrapValidator.min.css" />
+	<link rel="stylesheet" type="text/css" href="${basePath}/resource/css/plugins/iCheck/custom.css" >
+	<script type="text/javascript" src="${basePath}/resource/js/plugins/iCheck/icheck.min.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/role/role.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/bootstrapValidator.min.js"></script>
+	
+	<style type="text/css">
+		label {font-weight: 600; margin-left: 10px;}
+	</style>
+</head>
+<body>
+<headline>角色管理</headline>
+<subheadline>
+	<ol class="breadcrumb">
+		<li><a>系统管理</a></li>
+		<li class="active">角色管理</li>
+	</ol>
+</subheadline>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>角色列表</h5>
+			</div>
+			<div class="ibox-content">
+				<div class="search-well">
+					<form id="searchForm" class="form-inline" style="margin-top:0px;margin-right:0px;margin-bottom:20px;">
+						<input class="input-xlarge form-control" placeholder="角色名称" id="roleNameConditionTxt" type="text">
+						<button id="searchBtn" type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick = 'queryRole();'><i class="fa fa-search"></i> 查询</button>
+						<button type="button" class="btn btn-white" style="margin-bottom:0px;" onclick = 'clearConditionInput();'><i class="fa fa-eraser"></i> 清空</button>
+						<button type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick = 'showAddRoleDiv();'><i class="fa fa-plus"></i> 新增</button>
+					</form>
+				</div>
+				<div class="table-responsive">
+					<table id="roleTable" class="table table-striped responsive-utilities jambo_table"></table>
+					<div id="pageDiv"></div>
+				</div>
+				<!-- 新增角色 -->
+				<div class="modal fade" id="addRole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel">新增角色</h4>
+							</div>
+							<form id="roleForm">
+								<div class="modal-body">
+									<div class="form-group">
+										<input type="hidden" name="idTxt" id="idTxt"/>
+										<label for="roleName">角色名称 <font style="color:#a94442;">*</font></label>
+										<input type="text" class="form-control" id="roleName" name="roleName" maxlength="16">
+									</div>
+									<div class="form-group">
+										<label for="roleDesc">角色说明</label>
+										<input type="text" class="form-control" id="roleDesc" name="roleDesc" maxlength="100">
+									</div>
+								</div>
+							</form>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" onclick = "doValidate();"><i class="fa fa-save"></i> 保存</button>
+								<button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 新增角色 over-->
+				<input type="hidden" id="roleNameConditionTxtHdn"/>
+				<!-- 设置权限 -->
+				<div class="modal fade" id="setAuth" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel1">已配置权限<br /></h4>
+							</div>
+							<div class="modal-body">
+								<#list authList as auth>
+									<label class="checkbox" style="word-break:break-all">
+										<input id="chk${auth.id}" type="checkbox" class="i-checks" value="${auth.id}"> &nbsp;&nbsp; ${auth.privilegeName} (${auth.privilegeDesc})
+									</label>
+								</#list>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" id="saveButton"><i class="fa fa-save"></i> 保存</button>
+								<button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 设置权限 over -->
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

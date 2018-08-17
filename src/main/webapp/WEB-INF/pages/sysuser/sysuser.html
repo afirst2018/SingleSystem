@@ -1,0 +1,219 @@
+<head>
+	<title>用户管理</title>
+	<link rel="stylesheet" type="text/css" href="${basePath}/resource/js/plugins/poshytip-1.2/tip-yellowsimple/tip-yellowsimple.css" />
+	<link rel="stylesheet" type="text/css" href="${basePath}/resource/css/plugins/iCheck/custom.css" >
+	<script type="text/javascript" src="${basePath}/resource/js/plugins/iCheck/icheck.min.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/plugins/poshytip-1.2/jquery.poshytip.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/chujiuValidator.js"></script>
+	<script type="text/javascript" src="${basePath}/resource/js/sysuser/sysuserManage.js"></script>
+</head>
+<body>
+<headline>用户管理</headline>
+<subheadline>
+	<ol class="breadcrumb">
+		<li><a>系统管理</a></li>
+		<li class="active">用户管理</li>
+	</ol>
+</subheadline>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>用户列表</h5>
+			</div>
+			<div class="ibox-content">
+				<div class="search-well">
+					<form id="conditionInput" class="form-inline" style="margin-top:0px;margin-right:0px;margin-bottom:20px;">
+						<input class="input-xlarge form-control" placeholder="用户名" id="usernameTxt" type="text" style="width:120px;">
+						<input class="input-xlarge form-control" placeholder="真实姓名" id="realNameTxt" type="text" style="width:120px;">
+						<input class="input-xlarge form-control" placeholder="手机" id="mobileTxt" type="text" style="width:120px;">
+						<select id="enabledSel" class="form-control" style="width:120px;" onchange="enableChangeHandler(this);">
+							<option value="">是否可用</option>
+							<option value="1">是</option>
+							<option value="0">否</option>
+						</select>
+						<button id="searchBtn" type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick = 'querySysUserList();'><i class="fa fa-search"></i> 查询</button>
+						<button type="button" class="btn btn-white" style="margin-bottom:0px;" onclick = 'clearConditionInput();'><i class="fa fa-eraser"></i> 清空</button>
+						<button type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick = 'showAddUserDiv();'><i class="fa fa-plus"></i> 新增用户</button>
+					</form>
+				</div>
+				<div class="table-responsive">
+					<table id="userListTable" class="table table-striped responsive-utilities jambo_table"></table>
+					<div id="pageDiv"></div>
+				</div>
+				<!-- 用户详细信息 start -->
+				<div class="modal fade" id="userDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel"></h4>
+							</div>
+							<div class="modal-body">
+								<form id="userForm">
+									<input id="userPk" type="hidden">
+									<input id="userPk" type="hidden">
+									<div id="formDiv" style="border: 1px solid #ccc;border-radius: 4px;background-color: #f5f5f5;padding-top:40px;padding-bottom:20px;">
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="form-horizontal">
+													<div class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;">* </font>用户名：</label>
+														<div class="col-lg-5">
+															<input class="input-xlarge form-control" type="text" id="username" name="username"/>
+														</div>
+													</div>
+													<div id="pwdDiv" class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;">* </font>密码：</label>
+														<div class="col-lg-5">
+															<input class="input-xlarge form-control" type="text" id="pwd" name="pwd" data-vali="[{type:'required',msg:'密码必填'},{type:'maxLength',max:20}]"/>
+														</div>
+													</div>
+													<div id="repwdDiv" class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;">* </font>确认密码：</label>
+														<div class="col-lg-5">
+															<input class="input-xlarge form-control" type="text" id="repwd" name="repwd" data-vali="[{type:'required',msg:'确认密码必填'},{type:'maxLength',max:20},{type:'identical',field_id:'pwd',msg:'两次输入的密码不一致'}]"/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;">* </font>姓名：</label>
+														<div class="col-lg-5">
+															<input class="input-xlarge form-control" type="text" id="realName" name="realName" data-vali="[{type:'required',msg:'姓名必填'},{type:'maxLength',max:30}]"/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;">* </font>性别：</label>
+														<div id="sexRadioDiv" class="col-lg-5">
+															<span style="display: inline;margin-left: -20px;" class="radio i-checks">
+																<label>
+																	<input id="maleRadio" type="radio" value="1" name="sexType" ><span style="vertical-align: middle;">&nbsp;&nbsp;男</span>
+																</label>
+															</span>
+															<span style="display: inline;" class="radio i-checks">
+																<label>
+																	<input id="femaleRadio" type="radio" value="0" name="sexType"><span style="vertical-align: middle;">&nbsp;&nbsp;女</span>
+																</label>
+															</span>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;">* </font>手机：</label>
+														<div class="col-lg-5">
+															<input class="input-xlarge form-control" id="mobile" name="mobile" type="text" data-vali="[{type:'required',msg:'手机号必填'},{type:'maxLength',max:11},{type:'regExp',regExpString:'^[1][3-8]+\\d{9}$',msg:'手机号格式不正确'}]"/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;">* </font>Email：</label>
+														<div class="col-lg-5">
+															<input class="input-xlarge form-control" id="email" name="email" type="text" data-vali="[{type:'required',msg:'Email必填'},{type:'maxLength',max:50},{type:'regExp',regExpString:'^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+',msg:'电子邮箱格式不正确'}]"/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-lg-4 control-label"><font style="color:#a94442;"> </font>QQ：</label>
+														<div class="col-lg-5">
+															<input class="input-xlarge form-control" id="qq" name="qq" type="text" data-vali="[{type:'maxLength',max:50},{type:'regExp',regExpString:'^\\d{0,20}$',msg:'只能输入数字'}]"/>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" onclick = "saveUser()"><i class="fa fa-save"></i> 保存</button>
+								<button type="button" class="btn btn-white" data-dismiss="modal" ><i class="fa fa-times"></i> 取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 用户详细信息 end-->
+				<!--退回原因弹出框-->
+				<div class="modal fade" id="disabledDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel1">停用用户</h4>
+							</div>
+							<div class="modal-body">
+								<form id="disabledForm">
+									<div class="row">
+										<div class="col-lg-12">
+											<input type="hidden" id="userIdHdn">
+											<div class="form-group">
+												<textarea name="reasonDesc" id="reasonDesc" class="form-control" rows="7" placeholder="填写停用原因，最多200字" maxlength="200"></textarea>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" onclick = "validateStopReason()"><i class="fa fa-save"></i> 确定</button>
+								<button type="button" class="btn btn-white" data-dismiss="modal" ><i class="fa fa-times"></i> 取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 修改密码 -->
+				<div class="modal fade" id="changePwd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel2">修改密码</h4>
+							</div>
+							<form id="pwdForm">
+								<input type="hidden" name="id_pwd" id="id_pwd" />
+								<div class="modal-body">
+									<div class="form-group">
+										<label>密　　码<font style="color:#a94442;">*</font></label> <input type="password" class="form-control" id="cpassword" name="cpassword">
+									</div>
+									<div class="form-group">
+										<label>确认密码<font style="color:#a94442;">*</font></label> <input type="password" class="form-control" id="crepassword" name="crepassword">
+									</div>
+								</div>
+							</form>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" onclick="validatePwd()"><i class="fa fa-save"></i> 保存</button>
+								<button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="setRole" tabindex="-1" role="dialog"
+					 aria-labelledby="myModalLabel3" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel3">已配置角色<br />
+								</h4>
+							</div>
+							<div class="modal-body" style="max-height:500px;overflow-y:auto;">
+								<#list roleList as role>
+									<label class="checkbox" style="word-break:break-all">
+										<input type="checkbox" value="${role.id}"> ${role.roleName} (${role.roleDesc})
+									</label>
+								</#list>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" onclick = 'javascript:saveRole()' id="saveButton"><i class="fa fa-save"></i> 保存</button>
+								<button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<input type="hidden" id="usernameTxtHdn"/>
+				<input type="hidden" id="realNameTxtHdn"/>
+				<input type="hidden" id="mobileTxtHdn"/>
+				<input type="hidden" id="enabledTxtHdn"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>

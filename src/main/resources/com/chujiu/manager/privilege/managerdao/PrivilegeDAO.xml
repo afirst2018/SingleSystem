@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.privilege.managerdao.PrivilegeDAO">
+	<select id="getPrivilegeList"  resultType="com.chujiu.dto.PrivilegeDto">
+		SELECT id,PRIVILEGE_NAME as privilegeName,PRIVILEGE_DESC as privilegeDesc,STATUS FROM PRIVILEGE WHERE STATUS != 0
+	</select>
+	<!--  按条件分页查询 -->
+	<select id="selectPrivilegePage" resultType="com.chujiu.dto.PrivilegeDto" parameterType="com.chujiu.dto.PrivilegeDto">
+		SELECT ID,PRIVILEGE_NAME as privilegeName,PRIVILEGE_DESC as privilegeDesc
+		<![CDATA[  FROM PRIVILEGE WHERE PRIVILEGE_NAME<>'PRIV_LOGIN' ]]>
+		<if test="entity != null">
+			<if test="entity.privilegeName != null and entity.privilegeName != ''">
+				AND PRIVILEGE_NAME like CONCAT('%',#{entity.privilegeName},'%')
+			</if>
+			<if test="entity.privilegeDesc != null and entity.privilegeDesc != ''">
+				AND PRIVILEGE_DESC like CONCAT('%',#{entity.privilegeDesc},'%')
+			</if>
+		</if>
+	</select>
+	<!--  向表中插入数据前校验记录是否已存在 -->
+	<select id="selectPrivilegeForCheck" resultType="com.chujiu.dto.PrivilegeDto" parameterType="com.chujiu.dto.PrivilegeDto">
+		SELECT ID,PRIVILEGE_NAME as privilegeName,PRIVILEGE_DESC as privilegeDesc FROM PRIVILEGE WHERE PRIVILEGE_NAME = #{entity.privilegeName}
+	</select>
+	<!-- 根据id查询-->
+	<select id="selectPrivilegeListById" resultType="com.chujiu.dto.PrivilegeDto" parameterType="long">
+		SELECT ID,PRIVILEGE_NAME as privilegeName,PRIVILEGE_DESC as privilegeDesc FROM PRIVILEGE WHERE ID = #{id}
+	</select>
+	<!-- 新增 -->
+	<insert id="addPrivilegeList" parameterType="com.chujiu.dto.PrivilegeDto" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO PRIVILEGE(PRIVILEGE_NAME,PRIVILEGE_DESC) VALUES(#{privilegeName},#{privilegeDesc})
+	</insert>
+	<update id="updatePrivilegeListById" parameterType="com.chujiu.dto.PrivilegeDto">
+		UPDATE PRIVILEGE SET PRIVILEGE_NAME=#{entity.privilegeName},PRIVILEGE_DESC=#{entity.privilegeDesc}
+	     WHERE ID = #{entity.id}
+	</update>
+	<delete id="deletePrivilegeListById" parameterType="long">
+		DELETE FROM PRIVILEGE WHERE ID = #{id}
+	</delete>
+	
+	<!-- privilege menu rela-->
+	<!-- 根据id查询-->
+	<select id="selectMenuIdByPid" resultType="com.chujiu.dto.PrivilegeMenuDto" parameterType="long">
+		<!-- TODO chujiu sul 打开注释 -->
+		<!-- SELECT PRIVILEGE_ID as privilegeId,MENU_ID as menuId FROM PRIVILEGE_MENU_RELA WHERE PRIVILEGE_ID = #{id} -->
+		SELECT
+			pmr.PRIVILEGE_ID AS privilegeId,
+			pmr.MENU_ID AS menuId
+		FROM
+			PRIVILEGE_MENU_RELA pmr,
+			menu m
+		WHERE
+			m.ID = pmr.MENU_ID
+		AND PRIVILEGE_ID = #{id}
+		AND m.MENU_TYPE = '1'
+	</select>
+	<!-- 新增 -->
+	<insert id="addPrivilegeMenuRelaBatch" parameterType="java.util.List">
+		INSERT INTO PRIVILEGE_MENU_RELA(PRIVILEGE_ID,MENU_ID)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+			(#{item.privilegeId},#{item.menuId})
+		</foreach>
+	</insert>
+	<!-- 删除 -->
+	<delete id="delPrivilegeMenuRelaBatch" parameterType="com.chujiu.dto.PrivilegeMenuDto">
+		DELETE FROM PRIVILEGE_MENU_RELA WHERE
+		<foreach collection="list" item="item" open="(" separator=" OR " close=")" >
+			(PRIVILEGE_ID = #{item.privilegeId} AND MENU_ID = #{item.menuId})
+		</foreach>
+	</delete>
+	<delete id="delPrivilegeMenuByPriId" parameterType="long">
+		DELETE FROM PRIVILEGE_MENU_RELA WHERE PRIVILEGE_ID = #{id}
+	</delete>
+	
+	<!-- 根据菜单id查询关联表 -->
+	<select id="checkMenuDelRef" resultType="int" parameterType="long">
+		SELECT COUNT(*) FROM PRIVILEGE_MENU_RELA WHERE MENU_ID = #{id}
+	</select>
+</mapper>

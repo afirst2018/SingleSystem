@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<title>菜单管理</title>
+		<link rel="stylesheet" href="${basePath}/resource/css/zTreeStyle.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="${basePath}/resource/css/plugins/iCheck/custom.css" >
+		<script type="text/javascript" src="${basePath}/resource/js/plugins/iCheck/icheck.min.js"></script>
+		<script type="text/javascript" src="${basePath}/resource/js/jquery.ztree.all-3.5.min.js"></script>
+		<script type="text/javascript" src="${basePath}/resource/js/menumanage/sysMenu.js"></script>
+	</head>
+	<body class=" theme-blue">
+		<headline>菜单管理</headline>
+		<subheadline>
+			<ol class="breadcrumb">  
+				<li><a>系统管理</a></li>
+				<li class="active">菜单管理</li>
+			</ol>
+		</subheadline>
+		<div class="row">
+			<div class="col-lg-4">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>菜单信息修改</h5>
+					</div>
+					<div class="ibox-content">
+						<form id="form1">
+							<input type="hidden" id="parentId"/>
+							<input type="hidden" id="id"/>
+							<div class="form-group">
+								<label for="username">菜单名称<font style="color:#a94442;">*</font></label> <input type="text"
+									class="form-control" id="menuName" name="menuName" required="required" maxLength="16">
+							</div>
+							<div class="form-group">
+								<label for="username">图片地址</label> <input type="text"
+									class="form-control" id="image" name="image" maxLength="330">
+							</div>
+							<div class="form-group">
+								<label for="username">顺序号<font style="color:#a94442;">*</font></label> <input type="text"
+									class="form-control" id="orderNum" name="orderNum" required="required" maxLength="3">
+							</div>
+							<div class="form-group">
+								<!-- <label for="username">是否为叶子节点</label> <br/>
+									<input type="radio" name="isleaf" value="1" required="required">是
+									<input type="radio" name="isleaf" value="0" required="required">否 -->
+								<label> 是否为叶子节点：</label> <br/>
+								<div id="sexRadioDiv" class="col-lg-4">
+									<span style="display: inline;margin-left: -20px;" class="radio i-checks">
+										<label style="padding-left:6px;">
+											<input type="radio" value="1" name="isleaf" required="required"><span style="vertical-align: middle;">&nbsp;&nbsp;是</span>
+										</label>
+									</span>
+									<span style="display: inline;" class="radio i-checks">
+										<label>
+											<input type="radio" value="0" name="isleaf" required="required"><span style="vertical-align: middle;">&nbsp;&nbsp;否</span>
+										</label>
+									</span>
+								</div>
+								<div style="clear: both;"></div>
+							</div>							
+							<div class="form-group">
+								<label for="username">菜单地址<font id="menuUrlRequired" color="red" style="display:none">*</font></label><input type="text"
+									class="form-control" id="menuUrl" name="menuUrl" maxLength="330" >
+							</div>
+							<button type="button" class="btn btn-primary" onclick = 'checkForm();'><i class="fa fa-save"></i> 保存</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>菜单信息展示</h5>
+					</div>
+					<div class="ibox-content" style="min-height:219px;">
+						<div class="row">
+							<div class="col-lg-5">
+								<button type="button" class="btn btn-primary" onclick = 'javascript:addMenu();'><i class="fa fa-plus"></i> 新增</button>
+								<button type="button" class="btn btn-primary" onclick='nodeExpendHandler();'><i class="fa fa-chevron-down"></i>&nbsp;展开</button>
+								<button type="button" class="btn btn-primary" onclick='nodeCollapseHandler();'><i class="fa fa-chevron-up"></i>&nbsp;折叠</button>
+								<button type="button" class="btn btn-danger" onclick = 'javascript:deleteMenu();'><i class="fa fa-trash-o"></i> 删除</button>
+								<ul id="tree" class="ztree" style="width:260px; overflow:auto;"></ul>
+							</div>
+							<div class="col-lg-7">
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

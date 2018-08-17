@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.codelist.managerdao.CodeListDAO">
+	<resultMap type="com.chujiu.dto.CodeListDto" id="codeListEntity">
+		<id column="ID" property="id" />
+		<result column="KIND_NAME" property="kindName" />
+		<result column="KIND_VALUE" property="kindValue" />
+		<result column="CODE_NAME" property="codeName" />
+		<result column="CODE_VALUE" property="codeValue" />
+		<result column="ORDER_NUM" property="orderNum" />
+		<result column="REMARK" property="remark" />
+	</resultMap>
+
+	<!--  查询全部数据字典 -->
+	<select id="selectAllCodeList" resultType="java.util.HashMap">
+		SELECT ID,KIND_NAME,KIND_VALUE,CODE_NAME,CODE_VALUE,ORDER_NUM,REMARK FROM CODE_LIST ORDER BY KIND_VALUE,ORDER_NUM
+	</select>
+	<!--  按条件分页查询 -->
+	<select id="selectCodeListPage" resultMap="codeListEntity" parameterType="com.chujiu.dto.CodeListDto">
+		SELECT  ID,
+				KIND_NAME,
+				KIND_VALUE,
+				CODE_NAME,
+				CODE_VALUE,
+				ORDER_NUM,
+				CASE
+					WHEN REMARK = '' OR REMARK IS NULL THEN ''
+					ELSE REMARK
+				END AS REMARK
+		  FROM  CODE_LIST WHERE 1=1
+		<if test="entity != null">
+			<if test="entity.kindName != null and entity.kindName != ''">
+				AND KIND_NAME like CONCAT('%',#{entity.kindName},'%')
+			</if>
+			<if test="entity.kindValue != null and entity.kindValue != ''">
+				AND KIND_VALUE like CONCAT('%',#{entity.kindValue},'%')
+			</if>
+			<if test="entity.codeName != null and entity.codeName != ''">
+				AND CODE_NAME like CONCAT('%',#{entity.codeName},'%')
+			</if>
+			<if test="entity.codeValue != null and entity.codeValue != ''">
+				AND CODE_VALUE like CONCAT('%',#{entity.codeValue},'%')
+			</if>
+			<if test="entity.remark != null and entity.remark != ''">
+				AND REMARK like CONCAT('%',#{entity.remark},'%')
+			</if>
+		</if>
+		ORDER BY MODIFIED_ON DESC,KIND_VALUE,ORDER_NUM
+	</select>
+	<!--  向表中插入数据前校验记录是否已存在 -->
+	<select id="selectCodeListForCheck" resultMap="codeListEntity" parameterType="com.chujiu.dto.CodeListDto">
+		SELECT ID,KIND_NAME,KIND_VALUE,CODE_NAME,CODE_VALUE,ORDER_NUM 
+		  FROM CODE_LIST 
+		 WHERE KIND_NAME = #{entity.kindName} 
+		   AND KIND_VALUE = #{entity.kindValue} 
+		   AND CODE_NAME = #{entity.codeName}
+		   AND CODE_VALUE = #{entity.codeValue} 
+	</select>
+	<!-- 根据id查询-->
+	<select id="selectCodeListById" resultMap="codeListEntity" parameterType="long">
+		SELECT ID,KIND_NAME,KIND_VALUE,CODE_NAME,CODE_VALUE,ORDER_NUM,REMARK FROM CODE_LIST WHERE ID = #{id}
+	</select>
+	<!-- 新增 -->
+	<insert id="addCodeList" parameterType="com.chujiu.dto.CodeListDto" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CODE_LIST(KIND_NAME,KIND_VALUE,CODE_NAME,CODE_VALUE,ORDER_NUM,REMARK,CREATE_BY,CREATE_ON,MODIFIED_BY,MODIFIED_ON)
+		VALUES(#{kindName},#{kindValue},#{codeName},#{codeValue},#{orderNum},#{remark},#{createBy},#{createOn},#{modifiedBy},#{modifiedOn})
+	</insert>
+	<update id="updateCodeListById" parameterType="com.chujiu.dto.CodeListDto">
+		UPDATE CODE_LIST SET KIND_NAME=#{entity.kindName},KIND_VALUE=#{entity.kindValue},
+		       CODE_NAME=#{entity.codeName},CODE_VALUE=#{entity.codeValue},ORDER_NUM=#{entity.orderNum},REMARK=#{entity.remark},
+		       MODIFIED_BY=#{entity.modifiedBy},MODIFIED_ON=#{entity.modifiedOn}
+	     WHERE ID = #{entity.id}
+	</update>
+	<delete id="deleteCodeListById" parameterType="long">
+		DELETE FROM CODE_LIST WHERE ID = #{id}
+	</delete>
+</mapper>

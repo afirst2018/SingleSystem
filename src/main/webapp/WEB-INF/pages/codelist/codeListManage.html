@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<title>数据字典管理</title>
+		<script type="text/javascript" src="${basePath}/resource/js/codelist/codeListManage.js"></script>
+	</head>
+	<body>
+		<headline>数据字典管理</headline>
+		<subheadline>
+			<ol class="breadcrumb">  
+				<li><a>系统管理</a></li>
+				<li class="active">数据字典管理</li>
+			</ol>
+		</subheadline>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>数据字典列表</h5>
+					</div>
+					<div class="ibox-content">
+						<div class="search-well">
+						<form class="form-inline" style="margin-top:0px;margin-right:0px;margin-bottom:20px;">
+							<input class="input-xlarge form-control" placeholder="类型名称" id="knameConditionTxt" type="text">
+							<input class="input-xlarge form-control" placeholder="类型值" id="kvalueConditionTxt" type="text">
+							<input class="input-xlarge form-control" placeholder="数据字典名称" id="cnameConditionTxt" type="text">
+							<input class="input-xlarge form-control" placeholder="数据字典值" id="cvalueConditionTxt" type="text">
+							<button id="searchBtn" type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick = 'queryCodeList();'><i class="fa fa-search"></i> 查询</button>
+							<button type="button" class="btn btn-white" style="margin-bottom:0px;" onclick = 'clearConditionInput();'><i class="fa fa-eraser"></i> 清空</button>
+							<button type="button" class="btn btn-primary" style="margin-bottom:0px;" onclick = 'showAddCodeListDiv();'><i class="fa fa-plus"></i> 新增</button>
+						</form>
+						</div>
+						<div class="table-responsive">
+							<table id="codeListTable" class="table table-striped responsive-utilities jambo_table"></table>
+							<div id="pageDiv"></div>
+						</div>
+						<!-- 新增/修改codelist start -->
+						<div class="modal fade" id="addCodeListDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<h4 class="modal-title" id="myModalLabel"></h4>
+									</div>
+									<div class="modal-body">
+										<form id="addForm">
+											<input type="hidden" name="id" id="idTxt"/>
+											<div class="form-group">
+												<label for="kindNameTxt">类型名称<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="kindName" id="kindNameTxt" required maxLength="50"/>
+											</div>
+											<div class="form-group">
+												<label for="kindValueTxt">类型值<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="kindValue" id="kindValueTxt" required maxLength="20"/>
+											</div>
+											<div class="form-group">
+												<label for="codeNameTxt">数据字典名称<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="codeName" id="codeNameTxt" required maxLength="50"/>
+											</div>
+											<div class="form-group">
+												<label for="codeValueTxt">数据字典值<font style="color:#a94442;">*</font></label> <input type="text" class="form-control" name="codeValue" id="codeValueTxt" required maxLength="1"/>
+											</div>
+											<div class="form-group">
+												<label for="orderNumTxt">排序序号<font style="color:#a94442;">*</font><span style="color:#f8ac59;"> （最多输入3位大于0的整数）</span></label> <input type="text" class="form-control" name="orderNum" id="orderNumTxt" required pattern="^([1-9]\d*)$" maxLength="3"/>
+											</div>
+											<div class="form-group">
+												<label for="remarkTxt">备注</label> <input type="text" class="form-control" name="remark" id="remarkTxt" maxLength="100"/>
+											</div>
+											<div class="form-group">
+												<label style="color:#f8ac59;">注：'类型名称','类型值','数据字典名称','数据字典值',四者联合唯一确定一条记录</label>
+											</div>
+										</form>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-primary" onclick = "doValidate();"><i class="fa fa-save"></i> 保存</button>
+										<button type="button" class="btn btn-white" data-dismiss="modal" ><i class="fa fa-times"></i> 取消</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- 新增codelist end-->
+						<input type="hidden" id="knameConditionTxtHdn"/>
+						<input type="hidden" id="kvalueConditionTxtHdn"/>
+						<input type="hidden" id="cnameConditionTxtHdn"/>
+						<input type="hidden" id="cvalueConditionTxtHdn"/>
+						<input type="hidden" id="remarkConditionTxtHdn"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

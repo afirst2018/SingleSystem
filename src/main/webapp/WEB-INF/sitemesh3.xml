@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh>
+	<mapping path="/**" decorator="/template.html" />
+	<!-- 指定sitemesh3不需要修饰的页面 -->
+	<mapping path="/template.html"  exclue="true" />
+	<mapping path="/template1.html"  exclue="true" />
+	<mapping path="/jcaptcha.jpg"  exclue="true" />
+	<mapping path="/sessionTimeout.html" exclue="true" />
+	<mapping path="/expired.html" exclue="true" />
+	<mapping path="/login.html"  exclue="true" />
+	<mapping path="/druid**"  exclue="true" />
+	<mapping path="/appcommon.html"  exclue="true" />
+	<mapping path="/error.html"  exclue="true" />
+	<!-- 自定义标签 -->
+	<content-processor>
+		<tag-rule-bundle class="com.chujiu.sitemesh.ExtendHtmlTag4Sitemesh" />
+	</content-processor>
+</sitemesh>

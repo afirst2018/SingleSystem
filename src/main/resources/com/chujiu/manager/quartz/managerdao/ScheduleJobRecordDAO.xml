@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chujiu.manager.quartz.managerdao.ScheduleJobRecordDAO">
+	<resultMap id="BaseResultMap" type="com.chujiu.dto.ScheduleJobDto" >
+		<id column="ID" property="id" jdbcType="BIGINT" />
+		<result column="START_TIME" property="startTime" jdbcType="DATE" />
+		<result column="END_TIME" property="endTime" jdbcType="DATE" />
+		<result column="JOB_NAME" property="jobName" jdbcType="VARCHAR" />
+		<result column="JOB_GROUP" property="jobGroup" jdbcType="VARCHAR" />
+		<result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="BEAN_CLASS" property="beanClass" jdbcType="VARCHAR" />
+		<result column="NOTE" property="note" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+		ID, START_TIME, END_TIME, JOB_NAME, JOB_GROUP, DESCRIPTION, BEAN_CLASS, NOTE
+	</sql>
+
+	<insert id="addRecord" useGeneratedKeys="true" keyProperty="entity.id">
+		INSERT INTO qrtz_task_record (START_TIME, END_TIME, JOB_NAME, JOB_GROUP, DESCRIPTION, BEAN_CLASS, NOTE)
+		VALUES (now(),now(),#{entity.jobName},#{entity.jobGroup},#{entity.description},#{entity.beanClass},#{entity.note})
+	</insert>
+
+	<update id="updateRecord">
+		UPDATE qrtz_task_record
+		<set>
+			END_TIME = now()
+		</set>
+		WHERE id = #{id}
+	</update>
+</mapper>
